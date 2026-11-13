@@ -474,26 +474,24 @@
       currentLitWicks = Math.min(Math.max(count || 0, 0), MAX_WICKS);
       wickCountBadge.textContent = `${currentLitWicks} / ${MAX_WICKS}`;
 
-      // Update dots
-      for (let i = 1; i <= MAX_WICKS; i++) {
-        const dot = document.querySelector(`.dot-1, .dot-2, .dot-3, .dot-4, .dot-5`)[i - 1] || wickDots.children[i - 1];
-        if (dot) {
-          if (i <= currentLitWicks) {
-            dot.className = 'w-2.5 h-2.5 rounded-full bg-gold-400 shadow-[0_0_8px_#facc15] transition-all duration-500';
-          } else {
-            dot.className = 'w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500';
-          }
+      // Update all 5 dots accurately
+      const dots = wickDots.querySelectorAll('span');
+      dots.forEach((dot, idx) => {
+        if (idx < currentLitWicks) {
+          dot.className = 'w-2.5 h-2.5 rounded-full bg-gold-400 shadow-[0_0_8px_#facc15] transition-all duration-500';
+        } else {
+          dot.className = 'w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500';
         }
-      }
+      });
 
       if (currentLitWicks >= MAX_WICKS) {
         instructionTitle.textContent = "All 5 Wicks Are Lit!";
         instructionTitle.className = "font-sans font-bold text-base md:text-lg text-gold-300 tracking-wide";
         instructionSub.textContent = "The Pahana is fully illuminated. Ceremony Complete.";
       } else if (!isLocked && !isHolding) {
-        instructionTitle.textContent = "Press & Hold to Ignite Flame";
+        instructionTitle.textContent = "Tap or Hold to Ignite Flame";
         instructionTitle.className = "font-sans font-semibold text-base md:text-lg text-amber-100 tracking-wide";
-        instructionSub.textContent = `Hold for 2 seconds • Wick #${currentLitWicks + 1} of ${MAX_WICKS}`;
+        instructionSub.textContent = `Wick #${currentLitWicks + 1} of ${MAX_WICKS} Ready • පහන දල්වන්න`;
       }
     }
 
@@ -503,18 +501,16 @@
         const val = snapshot.val();
         connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Live';
         if (val && typeof val.litWicks === 'number') {
+          console.log("Firebase sync: litWicks =", val.litWicks);
           updateWickDisplay(val.litWicks);
         } else {
-          // If Firebase has not been initialized yet, preserve local state
-          const stored = parseInt(localStorage.getItem('lampState_litWicks') || '0', 10);
-          updateWickDisplay(stored);
+          updateWickDisplay(0);
         }
       }, (err) => {
         console.error("Firebase sync error:", err);
-        connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span> Firebase: Permission Denied';
+        connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span> Firebase Error';
       });
     } else {
-      // Local storage check
       const stored = parseInt(localStorage.getItem('lampState_litWicks') || '0', 10);
       updateWickDisplay(stored);
       connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Local Fallback';
@@ -549,22 +545,36 @@
             litWicks: clampedCount,
             lastTriggered: timestamp
           });
-          console.log("Firebase updated litWicks to:", clampedCount);
+          console.log("Firebase successfully updated litWicks to:", clampedCount);
         } catch (e) {
-          console.error("Failed to update Firebase (Check Database Rules!):", e);
+          console.error("Failed to update Firebase:", e);
           connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span> Firebase Write Denied';
         }
       }
     }
 
-    // Increment wick count deterministically
+    // Increment wick count deterministically by checking latest Firebase state first
     async function triggerWickIgnition() {
-      if (currentLitWicks >= MAX_WICKS) {
-        console.log("Max wicks already lit.");
-        return currentLitWicks;
+      let activeCount = currentLitWicks;
+
+      if (lampStateRef) {
+        try {
+          const snapshot = await lampStateRef.once('value');
+          const val = snapshot.val();
+          if (val && typeof val.litWicks === 'number') {
+            activeCount = val.litWicks;
+          }
+        } catch (e) {
+          console.warn("Could not query Firebase before incrementing, using current:", e);
+        }
       }
 
-      const nextCount = currentLitWicks + 1;
+      if (activeCount >= MAX_WICKS) {
+        console.log("Max wicks already lit (5/5).");
+        return MAX_WICKS;
+      }
+
+      const nextCount = activeCount + 1;
       await setLampStateInDB(nextCount);
       return nextCount;
     }
@@ -577,23 +587,22 @@
     }
 
     // ========================================================================
-    // 5. TOUCH / POINTER SCANNER INTERACTION
+    // 5. TOUCH / POINTER / CLICK SCANNER INTERACTION
     // ========================================================================
     function startScanning(e) {
-      if (e) e.preventDefault();
       if (isLocked) return;
       if (isHolding) return;
 
       if (currentLitWicks >= MAX_WICKS) {
         instructionTitle.textContent = "All Wicks Already Lit";
-        instructionSub.textContent = "Triple-click top emblem to reset for testing.";
+        instructionSub.textContent = "Tap reset button below to restart.";
         return;
       }
 
       isHolding = true;
       holdStartTime = performance.now();
 
-      // UI changes
+      // UI visual feedback
       fingerprintPad.classList.remove('idle-pulse');
       fingerprintPad.classList.add('scale-105', 'border-gold-400');
       fingerprintSvg.classList.remove('text-white/70');
@@ -603,7 +612,7 @@
 
       instructionTitle.textContent = "Scanning Fingerprint...";
       instructionTitle.className = "font-sans font-bold text-base md:text-lg text-gold-300 tracking-wide";
-      instructionSub.textContent = "Please hold still for 2 seconds...";
+      instructionSub.textContent = `Igniting Wick #${currentLitWicks + 1} of ${MAX_WICKS}...`;
 
       // Audio & Haptic
       startScanSound();
@@ -611,7 +620,7 @@
         navigator.vibrate([30]);
       }
 
-      // Start animation loop
+      // Start hold animation loop
       cancelAnimationFrame(scanAnimationFrameId);
       scanAnimationFrameId = requestAnimationFrame(scanProgressLoop);
     }
@@ -630,7 +639,6 @@
       const percentInt = Math.floor(progress * 100);
       scanPercentage.textContent = `SCANNING: ${percentInt}%`;
 
-      // Intermediate gentle haptic tap at 50%
       if (percentInt === 50 && navigator.vibrate) {
         navigator.vibrate([20]);
       }
@@ -638,7 +646,7 @@
       if (progress < 1.0) {
         scanAnimationFrameId = requestAnimationFrame(scanProgressLoop);
       } else {
-        // SUCCESS: Hold completed 2 full seconds!
+        // Full 2-second hold completed!
         handleScanSuccess();
       }
     }
@@ -651,36 +659,17 @@
       cancelAnimationFrame(scanAnimationFrameId);
       stopScanSound();
 
-      // If user tapped or held (> 100ms), trigger ignition immediately!
-      if (elapsed >= 100) {
-        progressCircle.style.transition = 'stroke-dashoffset 0.15s ease-out';
-        progressCircle.style.strokeDashoffset = '0';
-        handleScanSuccess();
-        return;
-      }
-
-      // Reset circular progress smoothly if accidental micro-touch
-      progressCircle.style.transition = 'stroke-dashoffset 0.25s ease-out';
-      progressCircle.style.strokeDashoffset = `${CIRCUMFERENCE}`;
+      // If user released before 2 seconds, fast-complete the scan and ignite!
+      // This ensures clicks, quick taps, and short holds ALL succeed reliably!
+      progressCircle.style.transition = 'stroke-dashoffset 0.15s ease-out';
+      progressCircle.style.strokeDashoffset = '0';
       setTimeout(() => {
-        progressCircle.style.transition = 'stroke-dashoffset 0.05s linear';
-      }, 260);
-
-      // Revert scanner visual state
-      fingerprintPad.classList.add('idle-pulse');
-      fingerprintPad.classList.remove('scale-105', 'border-gold-400');
-      fingerprintSvg.classList.remove('text-gold-400');
-      fingerprintSvg.classList.add('text-white/70');
-      scannerBeam.classList.add('hidden');
-      scanPercentage.classList.add('opacity-0');
-
-      if (currentLitWicks < MAX_WICKS) {
-        instructionTitle.textContent = "Tap or Hold to Ignite Flame";
-        instructionSub.textContent = `Wick #${currentLitWicks + 1} of ${MAX_WICKS} • පහන දල්වන්න`;
-      }
+        handleScanSuccess();
+      }, 150);
     }
 
     async function handleScanSuccess() {
+      if (isLocked) return;
       isHolding = false;
       isLocked = true; // Lock UI during success presentation
       cancelAnimationFrame(scanAnimationFrameId);
@@ -708,7 +697,7 @@
       instructionSub.textContent = "Look up at the main ceremonial display screen ✨";
       scanPercentage.textContent = `VERIFIED • WICK ${litIndex} OF 5`;
 
-      // Fast 1.5-Second Cool-down for next guest
+      // 1.5-Second Cooldown for next guest
       setTimeout(() => {
         if (currentLitWicks >= MAX_WICKS) {
           instructionTitle.textContent = "All 5 Wicks Are Lit!";
@@ -731,6 +720,7 @@
       fingerprintPad.classList.remove('success-pulse', 'border-emerald-400', 'scale-105');
       fingerprintPad.classList.add('idle-pulse', 'border-gold-500/30');
 
+      progressCircle.style.transition = 'none';
       progressCircle.style.strokeDashoffset = `${CIRCUMFERENCE}`;
       scannerBeam.classList.add('hidden');
       scanPercentage.classList.add('opacity-0');
@@ -738,10 +728,20 @@
       updateWickDisplay(currentLitWicks);
     }
 
-    // Attach Pointer Events (Works identically for Touch, Pen, and Mouse)
+    // Event listeners: Pointerdown starts, pointerup cancels/fast-completes
     scanContainer.addEventListener('pointerdown', startScanning);
     window.addEventListener('pointerup', cancelScanning);
     window.addEventListener('pointercancel', cancelScanning);
+
+    // Also support native click as instant ignite trigger
+    scanContainer.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (isLocked) return;
+      if (currentLitWicks >= MAX_WICKS) return;
+      if (!isHolding) {
+        handleScanSuccess();
+      }
+    });
 
     // Quick Ignite button (instant single tap)
     const quickIgniteBtn = document.getElementById('quick-ignite-btn');

@@ -81,6 +81,22 @@
     #webgl-canvas-container canvas {
       outline: none;
     }
+
+    /* Resilient Fallback Flame Animation */
+    @keyframes cssFlameMotion {
+      0%, 100% {
+        transform: scale(1, 1) rotate(-1deg);
+        filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.8));
+      }
+      50% {
+        transform: scale(1.08, 0.94) rotate(1.5deg);
+        filter: drop-shadow(0 0 20px rgba(251, 191, 36, 1)) drop-shadow(0 0 35px rgba(239, 68, 68, 0.6));
+      }
+    }
+    .css-flame-flicker {
+      animation: cssFlameMotion 0.8s ease-in-out infinite alternate;
+      border-radius: 50% 50% 20% 20% / 60% 60% 35% 35%;
+    }
   </style>
 </head>
 
@@ -104,6 +120,33 @@
        REAL 3D WEBGL THREE.JS CANVAS STAGE
        ====================================================================== -->
   <div id="webgl-canvas-container" class="cursor-grab active:cursor-grabbing"></div>
+
+  <!-- ======================================================================
+       FALLBACK STAGE (Activates seamlessly if WebGL is unavailable)
+       Uses high-res 3D model asset with dynamic CSS flame overlays
+       ====================================================================== -->
+  <div id="fallback-pahana-stage" class="hidden absolute inset-0 items-center justify-center pointer-events-none z-10">
+    <div class="relative w-full max-w-lg h-[82vh] flex items-center justify-center">
+      <img src="pahana-3d.png" alt="Traditional Sri Lankan Oil Lamp" class="h-full object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.9)] select-none" />
+      
+      <!-- The 5 CSS Flames on the main dish (Far-Left, Mid-Left, Center, Mid-Right, Far-Right) -->
+      <div id="fb-flame-1" class="absolute hidden flex-col items-center -ml-28 mt-14">
+        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
+      </div>
+      <div id="fb-flame-2" class="absolute hidden flex-col items-center -ml-14 mt-16">
+        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
+      </div>
+      <div id="fb-flame-3" class="absolute hidden flex-col items-center mt-17">
+        <div class="css-flame-flicker w-7 h-14 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
+      </div>
+      <div id="fb-flame-4" class="absolute hidden flex-col items-center ml-14 mt-16">
+        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
+      </div>
+      <div id="fb-flame-5" class="absolute hidden flex-col items-center ml-28 mt-14">
+        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- ======================================================================
        TOP BANNER & CEREMONIAL HEADER (Can be toggled with 'H' or 'I')
@@ -348,10 +391,20 @@
     let emberParticles = [];
     let flameTexture;
 
+    // 5 Visible Wick Positions across the front arc (Far-Left, Mid-Left, Center, Mid-Right, Far-Right)
+    const WICK_ANGLES = [
+      -0.85, // Wick 1: Far Left (-48.7°)
+      -0.42, // Wick 2: Mid Left (-24.1°)
+       0.00, // Wick 3: Center (0.0°)
+      +0.42, // Wick 4: Mid Right (+24.1°)
+      +0.85  // Wick 5: Far Right (+48.7°)
+    ];
+
     // Rotation Control State
     let isAutoRotating = true;
+    let autoRotateMode = 'sway'; // 'sway' (gentle ±12° ceremonial arc) or 'spin' (360°)
     let targetRotationY = null;
-    let rotationVelocity = 0;
+    let celebrationSpinRemaining = 0;
     const BASE_ROTATION_SPEED = 0.0035;
 
     // Create Procedural High-Res Flame Sprite Texture
@@ -389,64 +442,88 @@
       return new THREE.CanvasTexture(canvas);
     }
 
+    let isFallbackActive = false;
+    function activate2DFallback() {
+      isFallbackActive = true;
+      const fbStage = document.getElementById('fallback-pahana-stage');
+      if (fbStage) {
+        fbStage.classList.remove('hidden');
+        fbStage.classList.add('flex');
+      }
+      for (let i = 1; i <= MAX_WICKS; i++) {
+        const flame = document.getElementById(`fb-flame-${i}`);
+        if (flame) {
+          if (i <= currentLitWicks) flame.classList.remove('hidden');
+          else flame.classList.add('hidden');
+        }
+      }
+    }
+
     function init3D() {
-      scene = new THREE.Scene();
+      try {
+        scene = new THREE.Scene();
 
-      // Camera: elevated so viewer looks down into the dish and sees all 5 wicks clearly
-      camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 4.8, 22);
+        // Camera: elevated so viewer looks down into the dish and sees all 5 wicks clearly
+        camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 4.8, 22);
 
-      // WebGL Renderer with PBR Tonemapping
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.25;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      container.appendChild(renderer.domElement);
+        // WebGL Renderer with PBR Tonemapping
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.25;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
 
-      // OrbitControls: allows interactive inspection
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.maxPolarAngle = Math.PI / 2 + 0.08;
-      controls.minDistance = 12;
-      controls.maxDistance = 35;
-      controls.target.set(0, 0.5, 0);
+        // OrbitControls: allows interactive inspection
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 + 0.08;
+        controls.minDistance = 12;
+        controls.maxDistance = 35;
+        controls.target.set(0, 0.5, 0);
 
-      // 3D Scene Lighting
-      const ambientLight = new THREE.AmbientLight(0x4a2408, 1.4);
-      scene.add(ambientLight);
+        // 3D Scene Lighting
+        const ambientLight = new THREE.AmbientLight(0x4a2408, 1.4);
+        scene.add(ambientLight);
 
-      const keyLight = new THREE.DirectionalLight(0xfff1cf, 2.6);
-      keyLight.position.set(9, 14, 11);
-      keyLight.castShadow = true;
-      scene.add(keyLight);
+        const keyLight = new THREE.DirectionalLight(0xfff1cf, 2.6);
+        keyLight.position.set(9, 14, 11);
+        keyLight.castShadow = true;
+        scene.add(keyLight);
 
-      const fillLight = new THREE.DirectionalLight(0x8a4510, 1.5);
-      fillLight.position.set(-9, 8, -6);
-      scene.add(fillLight);
+        const fillLight = new THREE.DirectionalLight(0x8a4510, 1.5);
+        fillLight.position.set(-9, 8, -6);
+        scene.add(fillLight);
 
-      const backLight = new THREE.DirectionalLight(0xffb733, 2.0);
-      backLight.position.set(0, 12, -12);
-      scene.add(backLight);
+        const backLight = new THREE.DirectionalLight(0xffb733, 2.0);
+        backLight.position.set(0, 12, -12);
+        scene.add(backLight);
 
-      // Ground Shadow Plane
-      const shadowPlaneGeo = new THREE.PlaneGeometry(25, 25);
-      const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.5 });
-      const shadowPlane = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
-      shadowPlane.rotation.x = -Math.PI / 2;
-      shadowPlane.position.y = -7.05;
-      shadowPlane.receiveShadow = true;
-      scene.add(shadowPlane);
+        // Ground Shadow Plane
+        const shadowPlaneGeo = new THREE.PlaneGeometry(25, 25);
+        const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.5 });
+        const shadowPlane = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
+        shadowPlane.rotation.x = -Math.PI / 2;
+        shadowPlane.position.y = -7.05;
+        shadowPlane.receiveShadow = true;
+        scene.add(shadowPlane);
 
-      // Build Procedural 3D Brass Pahana
-      flameTexture = createFlameTexture();
-      buildProceduralPahana();
+        // Build Procedural 3D Brass Pahana
+        flameTexture = createFlameTexture();
+        buildProceduralPahana();
 
-      // Window resize
-      window.addEventListener('resize', onWindowResize);
+        // Window resize
+        window.addEventListener('resize', onWindowResize);
+        return true;
+      } catch (err) {
+        console.warn("WebGL not available in this environment, activating 3D Image + CSS fallback:", err);
+        activate2DFallback();
+        return false;
+      }
     }
 
     function buildProceduralPahana() {
@@ -521,13 +598,13 @@
       latheMesh.receiveShadow = true;
       lampGroup.add(latheMesh);
 
-      // 2. THE 5 PHYSICAL WICK SPOUTS & FLICKERING FLAMES
-      // Positioned radially 72 degrees apart (authentic Sri Lankan Kovil/Pahana architecture)
+      // 2. THE 5 VISIBLE WICK SPOUTS & FLICKERING FLAMES
+      // Positioned across the front visible arc (Far-Left, Mid-Left, Center, Mid-Right, Far-Right)
+      // Exactly matching the ceremony requirement: "(left, mid-left, center, mid-right, right)"
       const dishRadius = 3.55;
       const dishY = 0.02;
-
       for (let i = 0; i < 5; i++) {
-        const angle = (i * 2 * Math.PI) / 5;
+        const angle = WICK_ANGLES[i];
         const wickAnchor = new THREE.Group();
         wickAnchor.position.set(
           Math.sin(angle) * dishRadius,
@@ -687,6 +764,7 @@
     let clock = new THREE.Clock();
 
     function animate() {
+      if (!renderer || !scene || !camera) return;
       requestAnimationFrame(animate);
 
       const delta = clock.getDelta();
@@ -697,18 +775,29 @@
 
       // 1. ROTATION LOGIC ("this should rotate when lighting")
       if (lampGroup) {
-        if (targetRotationY !== null) {
-          // Smoothly interpolate lamp toward target wick front angle using shortest path
+        if (celebrationSpinRemaining > 0) {
+          // Auspicious celebratory 360-degree spin for grand finale
+          const spinStep = Math.min(0.05, celebrationSpinRemaining);
+          lampGroup.rotation.y += spinStep;
+          celebrationSpinRemaining -= spinStep;
+        } else if (targetRotationY !== null) {
+          // Smoothly interpolate lamp toward spotlight wick angle
           const diff = targetRotationY - lampGroup.rotation.y;
           lampGroup.rotation.y += diff * 0.055;
 
-          if (Math.abs(diff) < 0.005) {
+          if (Math.abs(diff) < 0.003) {
             lampGroup.rotation.y = targetRotationY;
-            targetRotationY = null; // target reached, resume gentle rotation
+            targetRotationY = null;
           }
         } else if (isAutoRotating) {
-          // Continuous sacred ceremonial rotation
-          lampGroup.rotation.y += BASE_ROTATION_SPEED;
+          if (autoRotateMode === 'sway') {
+            // Ceremonial swaying arc keeping all 5 flames facing the audience
+            const targetSway = Math.sin(elapsed * 0.45) * 0.18;
+            lampGroup.rotation.y += (targetSway - lampGroup.rotation.y) * 0.04;
+          } else {
+            // Continuous 360 degree rotation
+            lampGroup.rotation.y += BASE_ROTATION_SPEED;
+          }
         }
       }
 
@@ -805,15 +894,32 @@
         }
       }
 
-      // ROTATE TO NEWLY LIT WICK ("this should rotate when lighting")
+      // Update Fallback CSS Flames if active
+      if (isFallbackActive) {
+        for (let i = 1; i <= MAX_WICKS; i++) {
+          const flame = document.getElementById(`fb-flame-${i}`);
+          if (flame) {
+            if (i <= currentLitWicks) flame.classList.remove('hidden');
+            else flame.classList.add('hidden');
+          }
+        }
+      }
+
+      // ROTATE WHEN LIGHTING ("this should rotate when lighting")
       if (isIncreasing && lampGroup && newCount > 0) {
         const newlyLitIndex = newCount - 1; // 0 to 4
-        const wickAngle = (newlyLitIndex * 2 * Math.PI) / 5;
-        // To bring this newly lit wick to the front facing the camera (+Z), rotate lamp by -wickAngle
-        const targetAngle = -wickAngle;
-        const currentRot = lampGroup.rotation.y;
-        const delta = Math.atan2(Math.sin(targetAngle - currentRot), Math.cos(targetAngle - currentRot));
-        targetRotationY = currentRot + delta;
+        const wickAngle = WICK_ANGLES[newlyLitIndex];
+
+        if (newCount === MAX_WICKS) {
+          // Grand Finale celebration: full 360-degree rotation!
+          celebrationSpinRemaining = 2 * Math.PI;
+        } else {
+          // Spotlight turn toward the newly lit wick, then smoothly glides back to center
+          targetRotationY = -wickAngle * 0.35;
+          setTimeout(() => {
+            targetRotationY = 0;
+          }, 2200);
+        }
       }
 
       // Update Ambient Room Glow
