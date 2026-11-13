@@ -159,17 +159,38 @@
       Lighting Ceremony &bull; පහන දැල්වීම
     </p>
 
-    <!-- Wick Status Pills -->
+    <!-- Wick Status Pills (15 ceremonial dots in 3 groups of 5) -->
     <div class="mt-3 flex items-center gap-2 bg-black/40 border border-gold-500/20 px-4 py-1.5 rounded-full backdrop-blur-md">
       <span class="text-xs text-amber-200/70 uppercase tracking-wider font-semibold">Lit Wicks:</span>
-      <div id="wick-dots" class="flex gap-1.5 items-center">
-        <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500 dot-1"></span>
-        <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500 dot-2"></span>
-        <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500 dot-3"></span>
-        <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500 dot-4"></span>
-        <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500 dot-5"></span>
+      <div id="wick-dots" class="flex gap-2 items-center">
+        <!-- Group 1 (Wicks 1-5) -->
+        <div class="flex gap-1 items-center">
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+        </div>
+        <span class="w-px h-2.5 bg-gold-500/30"></span>
+        <!-- Group 2 (Wicks 6-10) -->
+        <div class="flex gap-1 items-center">
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+        </div>
+        <span class="w-px h-2.5 bg-gold-500/30"></span>
+        <!-- Group 3 (Wicks 11-15 - Upper Tier) -->
+        <div class="flex gap-1 items-center">
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+          <span class="w-2 h-2 rounded-full bg-white/20 transition-all duration-500"></span>
+        </div>
       </div>
-      <span id="wick-count-badge" class="ml-1 text-xs font-bold text-gold-400">0 / 5</span>
+      <span id="wick-count-badge" class="ml-1 text-xs font-bold text-gold-400">0 / 15</span>
     </div>
   </header>
 
@@ -453,7 +474,7 @@
 
     const CIRCUMFERENCE = 2 * Math.PI * 125; // 785.4
     const HOLD_DURATION_MS = 2000; // 2 seconds
-    const MAX_WICKS = 5;
+    const MAX_WICKS = 15;
 
     let currentLitWicks = 0;
     let holdStartTime = null;
@@ -474,24 +495,28 @@
       currentLitWicks = Math.min(Math.max(count || 0, 0), MAX_WICKS);
       wickCountBadge.textContent = `${currentLitWicks} / ${MAX_WICKS}`;
 
-      // Update all 5 dots accurately
-      const dots = wickDots.querySelectorAll('span');
+      // Update all 15 dots accurately (excluding divider lines)
+      const dots = wickDots.querySelectorAll('div > span');
       dots.forEach((dot, idx) => {
         if (idx < currentLitWicks) {
-          dot.className = 'w-2.5 h-2.5 rounded-full bg-gold-400 shadow-[0_0_8px_#facc15] transition-all duration-500';
+          dot.className = 'w-2 h-2 rounded-full bg-gold-400 shadow-[0_0_8px_#facc15] transition-all duration-500';
         } else {
-          dot.className = 'w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500';
+          dot.className = 'w-2 h-2 rounded-full bg-white/20 transition-all duration-500';
         }
       });
 
+      const quickBtnSpan = document.querySelector('#quick-ignite-btn span');
+
       if (currentLitWicks >= MAX_WICKS) {
-        instructionTitle.textContent = "All 5 Wicks Are Lit!";
+        instructionTitle.textContent = "All 15 Wicks Are Lit!";
         instructionTitle.className = "font-sans font-bold text-base md:text-lg text-gold-300 tracking-wide";
         instructionSub.textContent = "The Pahana is fully illuminated. Ceremony Complete.";
+        if (quickBtnSpan) quickBtnSpan.textContent = "✨ All 15 Wicks Lit";
       } else if (!isLocked && !isHolding) {
         instructionTitle.textContent = "Tap or Hold to Ignite Flame";
         instructionTitle.className = "font-sans font-semibold text-base md:text-lg text-amber-100 tracking-wide";
         instructionSub.textContent = `Wick #${currentLitWicks + 1} of ${MAX_WICKS} Ready • පහන දල්වන්න`;
+        if (quickBtnSpan) quickBtnSpan.textContent = `🔥 Tap to Ignite Wick #${currentLitWicks + 1}`;
       }
     }
 
@@ -692,20 +717,20 @@
       fingerprintPad.classList.remove('border-gold-400', 'idle-pulse');
       fingerprintPad.classList.add('success-pulse', 'border-emerald-400');
 
-      instructionTitle.textContent = `Flame #${litIndex} Ignited!`;
+      instructionTitle.textContent = `Flame #${litIndex} of ${MAX_WICKS} Ignited!`;
       instructionTitle.className = "font-sans font-bold text-lg md:text-xl text-emerald-400 tracking-wide";
       instructionSub.textContent = "Look up at the main ceremonial display screen ✨";
-      scanPercentage.textContent = `VERIFIED • WICK ${litIndex} OF 5`;
+      scanPercentage.textContent = `VERIFIED • WICK ${litIndex} OF ${MAX_WICKS}`;
 
-      // 1.5-Second Cooldown for next guest
+      // 1.0-Second Cooldown for next guest
       setTimeout(() => {
         if (currentLitWicks >= MAX_WICKS) {
-          instructionTitle.textContent = "All 5 Wicks Are Lit!";
+          instructionTitle.textContent = `All ${MAX_WICKS} Wicks Are Lit!`;
           instructionSub.textContent = "The Pahana is fully illuminated. Ceremony Complete.";
           return;
         }
         resetScannerUI();
-      }, 1500);
+      }, 1000);
     }
 
     function resetScannerUI() {
@@ -750,7 +775,7 @@
         e.stopPropagation();
         if (isLocked) return;
         if (currentLitWicks >= MAX_WICKS) {
-          alert("All 5 wicks are already lit! Use reset button to restart.");
+          alert(`All ${MAX_WICKS} wicks are already lit! Use reset button to restart.`);
           return;
         }
         handleScanSuccess();

@@ -123,28 +123,30 @@
 
   <!-- ======================================================================
        FALLBACK STAGE (Activates seamlessly if WebGL is unavailable)
-       Uses high-res 3D model asset with dynamic CSS flame overlays
+       Uses high-res 3D model asset with dynamic CSS flame overlays for 15 wicks
        ====================================================================== -->
   <div id="fallback-pahana-stage" class="hidden absolute inset-0 items-center justify-center pointer-events-none z-10">
     <div class="relative w-full max-w-lg h-[82vh] flex items-center justify-center">
       <img src="pahana-3d.png" alt="Traditional Sri Lankan Oil Lamp" class="h-full object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.9)] select-none" />
       
-      <!-- The 5 CSS Flames on the main dish (Far-Left, Mid-Left, Center, Mid-Right, Far-Right) -->
-      <div id="fb-flame-1" class="absolute hidden flex-col items-center -ml-28 mt-14">
-        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
-      </div>
-      <div id="fb-flame-2" class="absolute hidden flex-col items-center -ml-14 mt-16">
-        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
-      </div>
-      <div id="fb-flame-3" class="absolute hidden flex-col items-center mt-17">
-        <div class="css-flame-flicker w-7 h-14 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
-      </div>
-      <div id="fb-flame-4" class="absolute hidden flex-col items-center ml-14 mt-16">
-        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
-      </div>
-      <div id="fb-flame-5" class="absolute hidden flex-col items-center ml-28 mt-14">
-        <div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div>
-      </div>
+      <!-- Lower Tier (Wicks 1-10) on Main Dish -->
+      <div id="fb-flame-1" class="absolute hidden flex-col items-center -ml-32 mt-13"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-2" class="absolute hidden flex-col items-center -ml-25 mt-14"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-3" class="absolute hidden flex-col items-center -ml-18 mt-15"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-4" class="absolute hidden flex-col items-center -ml-10 mt-16"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-5" class="absolute hidden flex-col items-center -ml-2 mt-16.5"><div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-6" class="absolute hidden flex-col items-center ml-6 mt-16.5"><div class="css-flame-flicker w-6 h-12 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-7" class="absolute hidden flex-col items-center ml-14 mt-16"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-8" class="absolute hidden flex-col items-center ml-22 mt-15"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-9" class="absolute hidden flex-col items-center ml-29 mt-14"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-10" class="absolute hidden flex-col items-center ml-36 mt-13"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+
+      <!-- Upper Tier (Wicks 11-15) on Upper Dish -->
+      <div id="fb-flame-11" class="absolute hidden flex-col items-center -ml-16 -mt-36"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-12" class="absolute hidden flex-col items-center -ml-8 -mt-35"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-13" class="absolute hidden flex-col items-center ml-1 -mt-34"><div class="css-flame-flicker w-6 h-11 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-14" class="absolute hidden flex-col items-center ml-9 -mt-35"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
+      <div id="fb-flame-15" class="absolute hidden flex-col items-center ml-17 -mt-36"><div class="css-flame-flicker w-5 h-10 bg-gradient-to-t from-orange-500 via-amber-300 to-white"></div></div>
     </div>
   </div>
 
@@ -171,16 +173,34 @@
     <!-- Right: Status Counter & Controls -->
     <div class="flex items-center gap-4">
       <!-- Live Wick Counter -->
-      <div class="flex items-center gap-3 bg-black/60 border border-gold-500/30 px-5 py-2.5 rounded-full backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+      <div class="flex items-center gap-3 bg-black/60 border border-gold-500/30 px-5 py-2 rounded-full backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.5)]">
         <span class="text-xs uppercase tracking-widest text-amber-200/70 font-semibold">Lit Wicks:</span>
+        <!-- 15 Dots (Lower Tier 10 + Upper Tier 5) -->
         <div id="display-wick-dots" class="flex gap-2 items-center">
-          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-1"></span>
-          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-2"></span>
-          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-3"></span>
-          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-4"></span>
-          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-5"></span>
+          <!-- 10 Lower Tier dots -->
+          <div class="flex gap-1 items-center">
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+          </div>
+          <span class="w-px h-3 bg-gold-500/40"></span>
+          <!-- 5 Upper Tier dots -->
+          <div class="flex gap-1 items-center">
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500"></span>
+          </div>
         </div>
-        <span id="display-wick-count" class="font-serif text-lg font-bold text-gold-400 ml-1">0 / 5</span>
+        <span id="display-wick-count" class="font-serif text-lg font-bold text-gold-400 ml-1">0 / 15</span>
       </div>
 
       <!-- Quick Auto-Rotate Toggle Pill -->
@@ -217,11 +237,11 @@
     <!-- Quick Wick Test Trigger Buttons -->
     <div class="pointer-events-auto flex items-center gap-1.5 mb-2.5 bg-black/70 border border-gold-500/30 px-4 py-1.5 rounded-full backdrop-blur-md shadow-lg">
       <span class="text-[11px] text-amber-200/80 font-semibold uppercase tracking-wider mr-1">Test Wicks:</span>
-      <button onclick="setTestWicks(1)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all">🔥 1</button>
-      <button onclick="setTestWicks(2)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all">🔥 2</button>
-      <button onclick="setTestWicks(3)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all">🔥 3</button>
-      <button onclick="setTestWicks(4)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all">🔥 4</button>
+      <button onclick="stepTestWicks(-1)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all" title="Previous Wick">◀ -1</button>
+      <button onclick="stepTestWicks(1)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all" title="Next Wick">+1 ▶</button>
       <button onclick="setTestWicks(5)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all">🔥 5</button>
+      <button onclick="setTestWicks(10)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all">🔥 10 (Tier 1)</button>
+      <button onclick="setTestWicks(15)" class="px-2.5 py-1 rounded text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/30 transition-all">🔥 15 (All)</button>
       <button onclick="setTestWicks(0)" class="px-2.5 py-1 rounded text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/30 ml-1 transition-all">Reset</button>
     </div>
 
@@ -310,8 +330,25 @@
       if (!isAudioEnabled || !audioCtx) return;
       try {
         const now = audioCtx.currentTime;
-        const basePitches = [220, 261.63, 293.66, 329.63, 392];
-        const root = basePitches[(wickNumber - 1) % basePitches.length];
+        // Ascending harmonic pitches for all 15 wicks
+        const basePitches = [
+          196.00, // G3 (Wick 1)
+          220.00, // A3 (Wick 2)
+          246.94, // B3 (Wick 3)
+          261.63, // C4 (Wick 4)
+          293.66, // D4 (Wick 5)
+          329.63, // E4 (Wick 6)
+          349.23, // F4 (Wick 7)
+          392.00, // G4 (Wick 8)
+          440.00, // A4 (Wick 9)
+          493.88, // B4 (Wick 10 - Lower Tier Completion)
+          523.25, // C5 (Wick 11 - Upper Tier Start)
+          587.33, // D5 (Wick 12)
+          659.25, // E5 (Wick 13)
+          698.46, // F5 (Wick 14)
+          783.99  // G5 (Wick 15 - Auspicious Summit)
+        ];
+        const root = basePitches[Math.min(Math.max(wickNumber - 1, 0), basePitches.length - 1)];
 
         // Flame whoosh
         const bufferSize = audioCtx.sampleRate * 0.35;
@@ -391,14 +428,20 @@
     let emberParticles = [];
     let flameTexture;
 
-    // 5 Visible Wick Positions across the front arc (Far-Left, Mid-Left, Center, Mid-Right, Far-Right)
-    const WICK_ANGLES = [
-      -0.85, // Wick 1: Far Left (-48.7°)
-      -0.42, // Wick 2: Mid Left (-24.1°)
-       0.00, // Wick 3: Center (0.0°)
-      +0.42, // Wick 4: Mid Right (+24.1°)
-      +0.85  // Wick 5: Far Right (+48.7°)
-    ];
+    // 15 Ceremonial Wicks (Two-Tier Architecture: 10 Lower Tier + 5 Upper Tier)
+    const MAX_WICKS = 15;
+    const LOWER_TIER_COUNT = 10;
+    const UPPER_TIER_COUNT = 5;
+
+    // Helper to calculate the radial 3D angle for any of the 15 wicks
+    function getWickAngle(index) {
+      if (index < LOWER_TIER_COUNT) {
+        return (index * 2 * Math.PI) / LOWER_TIER_COUNT;
+      } else {
+        const upperIdx = index - LOWER_TIER_COUNT;
+        return (upperIdx * 2 * Math.PI) / UPPER_TIER_COUNT + (Math.PI / 10);
+      }
+    }
 
     // Rotation Control State
     let isAutoRotating = true;
@@ -598,39 +641,46 @@
       latheMesh.receiveShadow = true;
       lampGroup.add(latheMesh);
 
-      // 2. THE 5 VISIBLE WICK SPOUTS & FLICKERING FLAMES
-      // Positioned across the front visible arc (Far-Left, Mid-Left, Center, Mid-Right, Far-Right)
-      // Exactly matching the ceremony requirement: "(left, mid-left, center, mid-right, right)"
-      const dishRadius = 3.55;
-      const dishY = 0.02;
-      for (let i = 0; i < 5; i++) {
-        const angle = WICK_ANGLES[i];
+      // 2. THE 15 AUTHENTIC CEREMONIAL WICK SPOUTS & FLAMES
+      // Two-Tier Architecture: 10 Wicks on Lower Main Dish + 5 Wicks on Upper Tier
+      const lowerRadius = 3.55;
+      const lowerY = 0.02;
+      const upperRadius = 2.05;
+      const upperY = 1.95;
+
+      for (let i = 0; i < MAX_WICKS; i++) {
+        const isLowerTier = i < LOWER_TIER_COUNT;
+        const angle = getWickAngle(i);
+        const radius = isLowerTier ? lowerRadius : upperRadius;
+        const posY = isLowerTier ? lowerY : upperY;
+        const scaleFactor = isLowerTier ? 1.0 : 0.82;
+
         const wickAnchor = new THREE.Group();
         wickAnchor.position.set(
-          Math.sin(angle) * dishRadius,
-          dishY,
-          Math.cos(angle) * dishRadius
+          Math.sin(angle) * radius,
+          posY,
+          Math.cos(angle) * radius
         );
         wickAnchor.rotation.y = angle;
 
         // Brass spout projection beak
-        const spoutGeo = new THREE.ConeGeometry(0.35, 0.7, 16);
+        const spoutGeo = new THREE.ConeGeometry(0.35 * scaleFactor, 0.7 * scaleFactor, 16);
         const spoutMesh = new THREE.Mesh(spoutGeo, brassMaterial);
         spoutMesh.rotation.x = Math.PI / 2;
-        spoutMesh.position.set(0, 0, 0.25);
+        spoutMesh.position.set(0, 0, 0.25 * scaleFactor);
         wickAnchor.add(spoutMesh);
 
         // Cotton Wick Tip
-        const wickCottonGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.35, 8);
+        const wickCottonGeo = new THREE.CylinderGeometry(0.07 * scaleFactor, 0.07 * scaleFactor, 0.35 * scaleFactor, 8);
         const wickCottonMat = new THREE.MeshStandardMaterial({ color: 0x241812, roughness: 0.9 });
         const wickCotton = new THREE.Mesh(wickCottonGeo, wickCottonMat);
-        wickCotton.position.set(0, 0.12, 0.4);
+        wickCotton.position.set(0, 0.12 * scaleFactor, 0.4 * scaleFactor);
         wickCotton.rotation.x = 0.2;
         wickAnchor.add(wickCotton);
 
         // 3D Cross-Quad Flickering Flame
         const flameGroup = new THREE.Group();
-        flameGroup.position.set(0, 0.45, 0.4);
+        flameGroup.position.set(0, 0.45 * scaleFactor, 0.4 * scaleFactor);
         flameGroup.scale.set(0.001, 0.001, 0.001); // starts unlit
 
         const flameMat = new THREE.MeshBasicMaterial({
@@ -641,16 +691,20 @@
           side: THREE.DoubleSide
         });
 
-        const quad1 = new THREE.Mesh(new THREE.PlaneGeometry(0.85, 1.6), flameMat);
-        const quad2 = new THREE.Mesh(new THREE.PlaneGeometry(0.85, 1.6), flameMat);
+        const quadW = 0.85 * scaleFactor;
+        const quadH = 1.6 * scaleFactor;
+        const quad1 = new THREE.Mesh(new THREE.PlaneGeometry(quadW, quadH), flameMat);
+        const quad2 = new THREE.Mesh(new THREE.PlaneGeometry(quadW, quadH), flameMat);
         quad2.rotation.y = Math.PI / 2;
         flameGroup.add(quad1);
         flameGroup.add(quad2);
         wickAnchor.add(flameGroup);
 
         // 3D Point Light casting dynamic firelight on the brass
-        const wickPointLight = new THREE.PointLight(0xff9900, 0, 9, 1.6);
-        wickPointLight.position.set(0, 0.5, 0.4);
+        const lightDist = isLowerTier ? 9 : 7;
+        const lightIntensity = isLowerTier ? 2.4 : 2.0;
+        const wickPointLight = new THREE.PointLight(0xff9900, 0, lightDist, 1.6);
+        wickPointLight.position.set(0, 0.5 * scaleFactor, 0.4 * scaleFactor);
         wickAnchor.add(wickPointLight);
 
         lampGroup.add(wickAnchor);
@@ -862,16 +916,22 @@
     const displayFullscreenBtn = document.getElementById('display-fullscreen-btn');
 
     let currentLitWicks = 0;
-    const MAX_WICKS = 5;
 
-    const glowPresets = [
-      { bg: 'radial-gradient(circle at 50% 45%, rgba(255, 170, 40, 0.05) 0%, rgba(200, 100, 20, 0.02) 40%, transparent 70%)', opacity: '0.22', scale: '1' },
-      { bg: 'radial-gradient(circle at 50% 45%, rgba(255, 170, 40, 0.22) 0%, rgba(220, 90, 15, 0.12) 45%, transparent 75%)', opacity: '0.45', scale: '1.05' },
-      { bg: 'radial-gradient(circle at 50% 45%, rgba(255, 180, 50, 0.35) 0%, rgba(230, 95, 20, 0.2) 50%, transparent 80%)', opacity: '0.62', scale: '1.12' },
-      { bg: 'radial-gradient(circle at 50% 45%, rgba(255, 190, 60, 0.45) 0%, rgba(240, 105, 25, 0.28) 55%, transparent 85%)', opacity: '0.75', scale: '1.2' },
-      { bg: 'radial-gradient(circle at 50% 45%, rgba(255, 200, 70, 0.58) 0%, rgba(250, 115, 30, 0.36) 60%, transparent 90%)', opacity: '0.88', scale: '1.28' },
-      { bg: 'radial-gradient(circle at 50% 45%, rgba(255, 225, 90, 0.72) 0%, rgba(255, 130, 35, 0.48) 65%, rgba(180, 40, 10, 0.2) 85%, transparent 95%)', opacity: '1.0', scale: '1.38' }
-    ];
+    function getDynamicGlow(count) {
+      const ratio = Math.min(count / MAX_WICKS, 1.0);
+      const opacity = (0.22 + ratio * 0.78).toFixed(2);
+      const scale = (1.0 + ratio * 0.38).toFixed(2);
+      const r = 255;
+      const g = Math.floor(170 + ratio * 55);
+      const b = Math.floor(40 + ratio * 50);
+      const a1 = (0.05 + ratio * 0.65).toFixed(2);
+      const a2 = (0.02 + ratio * 0.45).toFixed(2);
+      return {
+        bg: `radial-gradient(circle at 50% 45%, rgba(${r}, ${g}, ${b}, ${a1}) 0%, rgba(255, 120, 20, ${a2}) 50%, transparent 85%)`,
+        opacity: opacity,
+        scale: scale
+      };
+    }
 
     function updateLampDisplay(targetCount, triggeredByEvent = false) {
       const newCount = Math.min(Math.max(targetCount || 0, 0), MAX_WICKS);
@@ -882,17 +942,15 @@
       // Update Top Status Counter
       displayWickCount.textContent = `${currentLitWicks} / ${MAX_WICKS}`;
 
-      // Update Top Dots
-      for (let i = 0; i < MAX_WICKS; i++) {
-        const dot = displayWickDots.children[i];
-        if (dot) {
-          if (i < currentLitWicks) {
-            dot.className = 'w-3.5 h-3.5 rounded-full bg-gold-400 shadow-[0_0_12px_#facc15] transition-all duration-700';
-          } else {
-            dot.className = 'w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700';
-          }
+      // Update Top Dots (15 dots in 2 tiers)
+      const dots = displayWickDots.querySelectorAll('div > span');
+      dots.forEach((dot, idx) => {
+        if (idx < currentLitWicks) {
+          dot.className = 'w-2.5 h-2.5 rounded-full bg-gold-400 shadow-[0_0_8px_#facc15] transition-all duration-500';
+        } else {
+          dot.className = 'w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-500';
         }
-      }
+      });
 
       // Update Fallback CSS Flames if active
       if (isFallbackActive) {
@@ -907,23 +965,23 @@
 
       // ROTATE WHEN LIGHTING ("this should rotate when lighting")
       if (isIncreasing && lampGroup && newCount > 0) {
-        const newlyLitIndex = newCount - 1; // 0 to 4
-        const wickAngle = WICK_ANGLES[newlyLitIndex];
+        const newlyLitIndex = newCount - 1; // 0 to 14
+        const wickAngle = getWickAngle(newlyLitIndex);
 
         if (newCount === MAX_WICKS) {
           // Grand Finale celebration: full 360-degree rotation!
           celebrationSpinRemaining = 2 * Math.PI;
         } else {
-          // Spotlight turn toward the newly lit wick, then smoothly glides back to center
-          targetRotationY = -wickAngle * 0.35;
-          setTimeout(() => {
-            targetRotationY = 0;
-          }, 2200);
+          // Rotate to showcase newly lit wick facing front (+Z)
+          const targetAngle = -wickAngle;
+          const currentRot = lampGroup.rotation.y;
+          const delta = Math.atan2(Math.sin(targetAngle - currentRot), Math.cos(targetAngle - currentRot));
+          targetRotationY = currentRot + delta;
         }
       }
 
-      // Update Ambient Room Glow
-      const glowSetting = glowPresets[currentLitWicks];
+      // Update Dynamic Ambient Room Glow
+      const glowSetting = getDynamicGlow(currentLitWicks);
       ambientRoomGlow.style.background = glowSetting.bg;
       ambientRoomGlow.style.opacity = glowSetting.opacity;
       ambientRoomGlow.style.transform = `scale(${glowSetting.scale})`;
@@ -933,22 +991,32 @@
         playWickIgniteSound(currentLitWicks);
       }
 
-      // Banner Text State
+      // Banner Text State for 15 wicks
       if (currentLitWicks === 0) {
         bannerTitle.textContent = "Awaiting First Wick";
         bannerTitle.className = "font-serif text-lg md:text-xl font-bold tracking-widest text-gold-300 uppercase";
         bannerSub.textContent = "Guests may now step forward to the tablet to illuminate the sacred flame.";
         celebrationMessage.classList.remove('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
-      } else if (currentLitWicks < MAX_WICKS) {
-        bannerTitle.textContent = `Wick #${currentLitWicks} Ignited`;
+      } else if (currentLitWicks < LOWER_TIER_COUNT) {
+        bannerTitle.textContent = `Wick #${currentLitWicks} Ignited (Lower Tier)`;
         bannerTitle.className = "font-serif text-lg md:text-xl font-bold tracking-widest text-amber-200 uppercase";
         bannerSub.textContent = `May the light dispel darkness and bring wisdom and prosperity • ${currentLitWicks} of ${MAX_WICKS} lit`;
         celebrationMessage.classList.remove('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
+      } else if (currentLitWicks === LOWER_TIER_COUNT) {
+        bannerTitle.textContent = `Lower Tier Complete • 10 Wicks Lit`;
+        bannerTitle.className = "font-serif text-lg md:text-xl font-bold tracking-widest text-gold-400 uppercase";
+        bannerSub.textContent = `Ascending to the Crown Tier • Next guests step forward for the upper wicks ✨`;
+        celebrationMessage.classList.remove('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
+      } else if (currentLitWicks < MAX_WICKS) {
+        bannerTitle.textContent = `Crown Wick #${currentLitWicks} Ignited (Upper Tier)`;
+        bannerTitle.className = "font-serif text-lg md:text-xl font-bold tracking-widest text-amber-100 uppercase";
+        bannerSub.textContent = `The sacred Pahana rises in full splendor • ${currentLitWicks} of ${MAX_WICKS} lit`;
+        celebrationMessage.classList.remove('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
       } else {
-        // ALL 5 WICKS LIT - GRAND FINALE!
-        bannerTitle.textContent = "The Lamp Shines in Full Radiance";
-        bannerTitle.className = "font-serif text-xl md:text-2xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-gold-400 to-amber-200 drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]";
-        bannerSub.textContent = "සියලු පහන් දැල්විණි • Wishing you a luminous and prosperous new year!";
+        // ALL 15 WICKS LIT - GRAND FINALE!
+        bannerTitle.textContent = "All 15 Wicks Shine in Full Radiance";
+        bannerTitle.className = "font-serif text-xl md:text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-gold-400 to-amber-200 drop-shadow-[0_0_20px_rgba(250,204,21,0.9)]";
+        bannerSub.textContent = "සියලු පහන් දැල්විණි • Wishing you a luminous, joyful, and prosperous celebration!";
         celebrationMessage.classList.add('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
 
         if (isIncreasing) {
@@ -1006,29 +1074,25 @@
       if (lampStateRef) lampStateRef.set({ litWicks: count, lastTriggered: Date.now() });
     };
 
+    window.stepTestWicks = function(delta) {
+      const next = Math.min(Math.max(currentLitWicks + delta, 0), MAX_WICKS);
+      window.setTestWicks(next);
+    };
+
     window.addEventListener('keydown', (e) => {
       initAudioContext();
 
-      if (e.key >= '0' && e.key <= '5') {
-        const count = parseInt(e.key, 10);
-        window.setTestWicks(count);
-      }
-
-      if (e.code === 'Space') {
+      if (e.code === 'Space' || e.key === 'ArrowRight' || e.key === 'ArrowUp') {
         e.preventDefault();
-        const next = Math.min(currentLitWicks + 1, MAX_WICKS);
-        window.setTestWicks(next);
-      }
-
-      if (e.key === 'r' || e.key === 'R') {
+        window.stepTestWicks(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        window.stepTestWicks(-1);
+      } else if (e.key === 'r' || e.key === 'R') {
         window.setTestWicks(0);
-      }
-
-      if (e.key === 'f' || e.key === 'F') {
+      } else if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
-      }
-
-      if (e.key === 'h' || e.key === 'H' || e.key === 'i' || e.key === 'I') {
+      } else if (e.key === 'h' || e.key === 'H' || e.key === 'i' || e.key === 'I') {
         uiHeader.classList.toggle('opacity-0');
         uiFooter.classList.toggle('opacity-0');
       }
