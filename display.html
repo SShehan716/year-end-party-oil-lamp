@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full select-none bg-black overflow-hidden">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traditional Sri Lankan Oil Lamp (Pahana) - Main Ceremonial Display</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            maroon: {
+              800: '#38060b',
+              900: '#220306',
+              950: '#130103',
+            },
+            gold: {
+              100: '#fef9c3',
+              200: '#fef08a',
+              300: '#fde047',
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04',
+            }
+          },
+          fontFamily: {
+            serif: ['Cinzel', 'Cinzel Decorative', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts: Cinzel & Cinzel Decorative -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Firebase App & Realtime Database SDK (compat v10) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  
+  <!-- External Firebase Config (falls back to inline if not found) -->
+  <script src="firebase-config.js"></script>
+
+  <style>
+    /* ========================================================================
+       KANDYAN LIYAVEL TRADITIONAL BACKGROUND PATTERN
+       ======================================================================== */
+    .bg-ceremonial {
+      background-color: #120103;
+      background-image: 
+        radial-gradient(circle at 50% 40%, rgba(65, 8, 14, 0.9) 0%, rgba(18, 1, 3, 0.98) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23d4af37' stroke-opacity='0.08' stroke-width='1.5'%3E%3Cpath d='M80 0 C60 30, 20 40, 20 80 C20 120, 60 130, 80 160 C100 130, 140 120, 140 80 C140 40, 100 30, 80 0 Z'/%3E%3Cpath d='M0 80 C30 60, 40 20, 80 20 C120 20, 130 60, 160 80 C130 100, 120 140, 80 140 C40 140, 30 100, 0 80 Z'/%3E%3Ccircle cx='80' cy='80' r='16' stroke-dasharray='3 3'/%3E%3Ccircle cx='80' cy='80' r='6' fill='%23d4af37' fill-opacity='0.05'/%3E%3Cpath d='M40 40 Q80 70 80 80 Q80 90 120 120'/%3E%3Cpath d='M120 40 Q80 70 80 80 Q80 90 40 120'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* ========================================================================
+       DYNAMIC AMBIENT ROOM GLOW
+       ======================================================================== */
+    #ambient-room-glow {
+      transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), transform 2s ease-out;
+      transform-origin: 50% 35%;
+    }
+
+    /* ========================================================================
+       REALISTIC MULTI-LAYER CSS FLAME ANIMATIONS
+       ======================================================================== */
+    /* Core flame base shape & flicker keyframes */
+    @keyframes flameFlickerA {
+      0%, 100% {
+        transform: scale(1, 1) rotate(-1deg);
+        border-radius: 50% 50% 20% 20% / 60% 60% 35% 35%;
+      }
+      25% {
+        transform: scale(0.94, 1.07) rotate(1.5deg) skewX(1deg);
+        border-radius: 46% 54% 25% 15% / 55% 65% 30% 40%;
+      }
+      50% {
+        transform: scale(1.05, 0.95) rotate(-0.5deg) skewX(-1deg);
+        border-radius: 52% 48% 18% 22% / 62% 58% 38% 32%;
+      }
+      75% {
+        transform: scale(0.97, 1.04) rotate(1deg);
+        border-radius: 48% 52% 22% 18% / 58% 62% 34% 36%;
+      }
+    }
+
+    @keyframes flameFlickerB {
+      0%, 100% {
+        transform: scale(1.02, 0.97) rotate(1deg);
+        border-radius: 52% 48% 22% 18% / 58% 62% 38% 32%;
+      }
+      30% {
+        transform: scale(0.95, 1.06) rotate(-1.5deg) skewX(-1.5deg);
+        border-radius: 47% 53% 18% 22% / 64% 56% 32% 38%;
+      }
+      60% {
+        transform: scale(1.06, 0.94) rotate(0.8deg);
+        border-radius: 54% 46% 25% 15% / 56% 64% 40% 30%;
+      }
+      80% {
+        transform: scale(0.98, 1.03) rotate(-1deg) skewX(1deg);
+        border-radius: 50% 50% 20% 20% / 60% 60% 35% 35%;
+      }
+    }
+
+    @keyframes flameGlowPulse {
+      0%, 100% {
+        opacity: 0.85;
+        filter: drop-shadow(0 0 16px rgba(255, 140, 0, 0.8)) drop-shadow(0 0 32px rgba(255, 60, 0, 0.6));
+      }
+      50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 24px rgba(255, 170, 0, 1)) drop-shadow(0 0 48px rgba(255, 80, 0, 0.85)) drop-shadow(0 0 70px rgba(255, 200, 50, 0.5));
+      }
+    }
+
+    @keyframes sparkFloat {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-55px) translateX(var(--drift, 6px)) scale(0.2);
+        opacity: 0;
+      }
+    }
+
+    /* Flame Component Styles */
+    .flame-wrapper {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      pointer-events: none;
+      transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0;
+      transform-origin: 50% 100%;
+    }
+
+    .flame-wrapper.active {
+      opacity: 1;
+      transform: translate(-50%, -100%) scale(1);
+    }
+
+    /* Teardrop outer flame */
+    .flame-outer {
+      position: relative;
+      width: 26px;
+      height: 48px;
+      background: linear-gradient(to top, rgba(255, 69, 0, 0.95), rgba(255, 140, 0, 0.9), rgba(255, 215, 0, 0.95));
+      border-radius: 50% 50% 20% 20% / 60% 60% 35% 35%;
+      box-shadow: 
+        0 0 12px #ff4500,
+        0 0 24px #ff8c00,
+        0 0 45px #ffa500;
+      animation: flameGlowPulse 1.8s infinite ease-in-out;
+    }
+
+    /* Inner hot flame core */
+    .flame-inner {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 28px;
+      background: linear-gradient(to top, #ff9100, #ffeb3b 60%, #ffffff 95%);
+      border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+      box-shadow: 0 0 8px #ffffff;
+    }
+
+    /* Blue base combustion flame root */
+    .flame-base-blue {
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 6px;
+      background: radial-gradient(circle, rgba(0, 162, 255, 0.9) 0%, rgba(30, 80, 255, 0.4) 60%, transparent 100%);
+      border-radius: 50%;
+    }
+
+    /* Sparks emitting from flame */
+    .spark {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: #ffe082;
+      border-radius: 50%;
+      box-shadow: 0 0 4px #ffb300;
+      animation: sparkFloat 1.2s infinite ease-out;
+    }
+
+    /* Staggered flame animations so each wick flickers independently */
+    .wick-flame-1 .flame-outer { animation: flameFlickerA 0.22s infinite alternate, flameGlowPulse 1.7s infinite; }
+    .wick-flame-2 .flame-outer { animation: flameFlickerB 0.18s infinite alternate, flameGlowPulse 1.9s infinite 0.2s; }
+    .wick-flame-3 .flame-outer { animation: flameFlickerA 0.25s infinite alternate, flameGlowPulse 1.6s infinite 0.4s; }
+    .wick-flame-4 .flame-outer { animation: flameFlickerB 0.20s infinite alternate, flameGlowPulse 1.8s infinite 0.3s; }
+    .wick-flame-5 .flame-outer { animation: flameFlickerA 0.23s infinite alternate, flameGlowPulse 2.0s infinite 0.1s; }
+
+    /* Wick Cotton Tip Indicator */
+    .wick-tip {
+      position: absolute;
+      width: 4px;
+      height: 8px;
+      background: #1c1511;
+      border-radius: 2px 2px 0 0;
+      transform: translate(-50%, -100%);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .wick-tip.lit {
+      background: #ff5722;
+      box-shadow: 0 0 5px #ff5722;
+    }
+
+    /* Celebration Halo Aura */
+    @keyframes celebrationRadiance {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 1;
+      }
+    }
+
+    .all-lit-radiance {
+      animation: celebrationRadiance 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="h-full w-full flex flex-col justify-between items-center text-white relative overflow-hidden bg-ceremonial select-none">
+
+  <!-- ======================================================================
+       DYNAMIC BACKGROUND ROOM ILLUMINATION
+       Scales dynamically in intensity and size as wicks are lit (0 to 5)
+       ====================================================================== -->
+  <div
+    id="ambient-room-glow"
+    class="absolute inset-0 pointer-events-none transition-all duration-1000 ease-out"
+    style="background: radial-gradient(circle at 50% 38%, rgba(255, 170, 40, 0.05) 0%, rgba(200, 100, 20, 0.02) 40%, transparent 70%); opacity: 0.2;"
+  ></div>
+
+  <!-- Decorative Golden Overhead Vignette -->
+  <div class="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none z-20"></div>
+  <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none z-20"></div>
+
+  <!-- ======================================================================
+       TOP BANNER & CEREMONIAL HEADER (Can be toggled with 'H' or 'I')
+       ====================================================================== -->
+  <header id="ui-header" class="w-full flex justify-between items-start px-8 pt-6 z-30 transition-opacity duration-500">
+    <!-- Left: Cultural Title -->
+    <div class="flex flex-col">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-gold-400 animate-pulse"></span>
+        <span class="font-serif text-xs md:text-sm tracking-[0.3em] uppercase text-amber-200/80">
+          Traditional Sri Lankan Ceremony
+        </span>
+      </div>
+      <h1 class="font-serif text-2xl md:text-4xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold-300 to-amber-100 drop-shadow-[0_2px_12px_rgba(234,179,8,0.3)] mt-1">
+        THE AUSPICIOUS OIL LAMP
+      </h1>
+      <p class="font-serif text-xs md:text-sm text-amber-300/60 tracking-wider mt-0.5">
+        සම්ප්‍රදායික පිත්තල පහන දැල්වීම &bull; Annual Celebration
+      </p>
+    </div>
+
+    <!-- Right: Status Counter & Controls -->
+    <div class="flex items-center gap-4">
+      <!-- Live Wick Counter -->
+      <div class="flex items-center gap-3 bg-black/60 border border-gold-500/30 px-5 py-2.5 rounded-full backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+        <span class="text-xs uppercase tracking-widest text-amber-200/70 font-semibold">Lit Wicks:</span>
+        <div id="display-wick-dots" class="flex gap-2 items-center">
+          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-1"></span>
+          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-2"></span>
+          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-3"></span>
+          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-4"></span>
+          <span class="w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700 disp-dot-5"></span>
+        </div>
+        <span id="display-wick-count" class="font-serif text-lg font-bold text-gold-400 ml-1">0 / 5</span>
+      </div>
+
+      <!-- Quick Audio Toggle Pill -->
+      <button id="audio-toggle-btn" class="bg-black/50 hover:bg-black/80 border border-gold-500/20 text-amber-200/70 hover:text-amber-100 p-2.5 rounded-full backdrop-blur-md transition-all" title="Toggle Ceremonial Sound">
+        <svg id="audio-icon-on" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/>
+        </svg>
+        <svg id="audio-icon-off" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+        </svg>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button id="display-fullscreen-btn" class="bg-black/50 hover:bg-black/80 border border-gold-500/20 text-amber-200/70 hover:text-amber-100 p-2.5 rounded-full backdrop-blur-md transition-all" title="Fullscreen (F)">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       CENTER STAGE: TRADITIONAL SRI LANKAN BRASS OIL LAMP (PAHANA)
+       ====================================================================== -->
+  <main class="relative flex-1 w-full flex items-center justify-center z-10 -mt-6">
+
+    <!-- Container for Brass Lamp + Floating Wick Flames -->
+    <!-- Dimensions engineered for 16:9 large displays & projectors -->
+    <div id="lamp-stage" class="relative w-[360px] md:w-[480px] lg:w-[540px] h-[580px] md:h-[720px] lg:h-[780px] flex items-center justify-center">
+
+      <!-- ==================================================================
+           5 FLICKERING WICK FLAMES (Positioned above each spout)
+           Coordinates align accurately with the brass oil dish spouts
+           ================================================================== -->
+
+      <!-- WICK 1: Far Left -->
+      <div id="flame-wick-1" class="flame-wrapper wick-flame-1" style="left: 17%; top: 38.5%;">
+        <div class="flame-outer">
+          <div class="flame-inner"></div>
+          <div class="flame-base-blue"></div>
+          <div class="spark" style="left: 30%; --drift: -10px; animation-delay: 0.1s;"></div>
+          <div class="spark" style="left: 70%; --drift: -5px; animation-delay: 0.7s;"></div>
+        </div>
+      </div>
+
+      <!-- WICK 2: Mid Left -->
+      <div id="flame-wick-2" class="flame-wrapper wick-flame-2" style="left: 33%; top: 39.8%;">
+        <div class="flame-outer">
+          <div class="flame-inner"></div>
+          <div class="flame-base-blue"></div>
+          <div class="spark" style="left: 40%; --drift: -6px; animation-delay: 0.3s;"></div>
+          <div class="spark" style="left: 60%; --drift: -2px; animation-delay: 0.9s;"></div>
+        </div>
+      </div>
+
+      <!-- WICK 3: Center Front -->
+      <div id="flame-wick-3" class="flame-wrapper wick-flame-3" style="left: 50%; top: 40.5%;">
+        <div class="flame-outer scale-110">
+          <div class="flame-inner"></div>
+          <div class="flame-base-blue"></div>
+          <div class="spark" style="left: 50%; --drift: 4px; animation-delay: 0.2s;"></div>
+          <div class="spark" style="left: 20%; --drift: -6px; animation-delay: 0.8s;"></div>
+        </div>
+      </div>
+
+      <!-- WICK 4: Mid Right -->
+      <div id="flame-wick-4" class="flame-wrapper wick-flame-4" style="left: 67%; top: 39.8%;">
+        <div class="flame-outer">
+          <div class="flame-inner"></div>
+          <div class="flame-base-blue"></div>
+          <div class="spark" style="left: 60%; --drift: 6px; animation-delay: 0.4s;"></div>
+          <div class="spark" style="left: 30%; --drift: 2px; animation-delay: 1.0s;"></div>
+        </div>
+      </div>
+
+      <!-- WICK 5: Far Right -->
+      <div id="flame-wick-5" class="flame-wrapper wick-flame-5" style="left: 83%; top: 38.5%;">
+        <div class="flame-outer">
+          <div class="flame-inner"></div>
+          <div class="flame-base-blue"></div>
+          <div class="spark" style="left: 70%; --drift: 10px; animation-delay: 0.2s;"></div>
+          <div class="spark" style="left: 40%; --drift: 5px; animation-delay: 0.6s;"></div>
+        </div>
+      </div>
+
+      <!-- ==================================================================
+           AUTHENTIC SRI LANKAN BRASS OIL LAMP (PAHANA) VECTOR GRAPHIC
+           Rendered with metallic brass gradients, Hansa / Rooster finial,
+           5-wick oil dish, turned brass nodes, and flared pedestal base.
+           ================================================================== -->
+      <svg id="pahana-svg" class="w-full h-full drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)]" viewBox="0 0 400 650" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Polished Brass Linear Gradients -->
+          <linearGradient id="brassMetallic" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4a2800" />
+            <stop offset="15%" stop-color="#996c13" />
+            <stop offset="35%" stop-color="#e5b842" />
+            <stop offset="50%" stop-color="#fff5b8" />
+            <stop offset="65%" stop-color="#e5b842" />
+            <stop offset="85%" stop-color="#996c13" />
+            <stop offset="100%" stop-color="#3d2000" />
+          </linearGradient>
+
+          <linearGradient id="brassHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7c530e" />
+            <stop offset="40%" stop-color="#fedc6a" />
+            <stop offset="50%" stop-color="#ffffff" />
+            <stop offset="60%" stop-color="#fedc6a" />
+            <stop offset="100%" stop-color="#5c3802" />
+          </linearGradient>
+
+          <linearGradient id="brassDishGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fedc6a" />
+            <stop offset="40%" stop-color="#c99726" />
+            <stop offset="80%" stop-color="#734907" />
+            <stop offset="100%" stop-color="#3b2100" />
+          </linearGradient>
+
+          <radialGradient id="brassBulbHighlight" cx="45%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="25%" stop-color="#fce17b" />
+            <stop offset="60%" stop-color="#c29124" />
+            <stop offset="90%" stop-color="#694107" />
+            <stop offset="100%" stop-color="#2c1700" />
+          </radialGradient>
+
+          <radialGradient id="lampGlowFilter" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="rgba(255, 220, 100, 0.4)" />
+            <stop offset="70%" stop-color="rgba(255, 120, 20, 0.1)" />
+            <stop offset="100%" stop-color="transparent" />
+          </radialGradient>
+        </defs>
+
+        <!-- Dynamic Halo behind upper lamp -->
+        <circle cx="200" cy="270" r="160" fill="url(#lampGlowFilter)" class="pointer-events-none" />
+
+        <!-- ================================================================
+             1. THE CROWN FINIAL: KANDYAN ROOSTER / HANSA (කූකුළා / හංසයා)
+             Traditional bird finial symbolizing dawn and auspicious beginning
+             ================================================================ -->
+        <g id="finial-rooster" transform="translate(0, 10)">
+          <!-- Rooster Tail Plumes (Arched curved brass feathers) -->
+          <path d="M192 105 C185 80, 160 50, 142 58 C130 63, 138 85, 158 95 C170 102, 185 110, 190 120" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
+          <path d="M194 100 C182 65, 155 32, 135 40 C122 45, 128 70, 148 83 C165 94, 185 105, 192 115" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
+          <path d="M196 95 C190 60, 175 25, 150 18 C138 14, 136 35, 152 52 C168 70, 188 90, 195 105" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
+          <!-- Central Crest / Tail plume top arc -->
+          <path d="M198 90 C198 45, 190 10, 170 4 C158 0, 152 18, 165 38 C178 58, 195 80, 198 100" fill="url(#brassMetallic)"/>
+
+          <!-- Rooster Body & Chest -->
+          <path d="M190 125 C190 105, 205 92, 218 95 C230 98, 238 112, 232 125 C226 138, 205 142, 190 135 Z" fill="url(#brassBulbHighlight)" stroke="#5c3802" stroke-width="1"/>
+          
+          <!-- Rooster Neck & Head -->
+          <path d="M215 100 C218 88, 222 75, 228 68 C232 63, 240 65, 240 75 C240 85, 230 96, 224 105 Z" fill="url(#brassMetallic)"/>
+          
+          <!-- Rooster Comb (Crest atop head) -->
+          <path d="M232 64 C230 58, 235 52, 240 54 C243 55, 243 60, 246 58 C249 56, 252 60, 248 65 C244 70, 238 72, 232 64 Z" fill="url(#brassHighlight)"/>
+          
+          <!-- Beak & Wattle -->
+          <path d="M242 70 L254 73 L242 77 Z" fill="#fff5b8" stroke="#734907" stroke-width="0.8"/>
+          <path d="M238 78 C242 82, 240 88, 236 86 C234 84, 235 80, 238 78 Z" fill="#b91c1c"/>
+
+          <!-- Bird Pedestal Cup (Small turned brass disc holding the bird) -->
+          <ellipse cx="200" cy="142" rx="18" ry="5" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
+          <path d="M192 142 L194 156 L206 156 L208 142 Z" fill="url(#brassHighlight)"/>
+          <ellipse cx="200" cy="156" rx="24" ry="7" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
+          <path d="M190 156 C190 170, 195 185, 200 195 C205 185, 210 170, 210 156 Z" fill="url(#brassBulbHighlight)"/>
+          <ellipse cx="200" cy="195" rx="16" ry="5" fill="url(#brassMetallic)"/>
+        </g>
+
+        <!-- ================================================================
+             2. MAIN WICK RESERVOIR DISH (තැටිය - TETIYA)
+             Deep brass basin with 5 prominent spout projections for wicks
+             ================================================================ -->
+        <g id="oil-dish-tier">
+          <!-- Upper Lip & Spouts Rim (Wide flared bowl) -->
+          <!-- The 5 distinct spout lips: Far-Left, Mid-Left, Center, Mid-Right, Far-Right -->
+          <path d="
+            M 68 250 
+            C 100 258, 120 262, 132 260
+            C 145 258, 180 266, 200 266
+            C 220 266, 255 258, 268 260
+            C 280 262, 300 258, 332 250
+            C 310 275, 260 295, 200 295
+            C 140 295, 90 275, 68 250 Z" 
+            fill="url(#brassDishGradient)" 
+            stroke="#5c3802" 
+            stroke-width="1.5"
+          />
+
+          <!-- Oil Bowl Underside (Chalice curve) -->
+          <path d="
+            M 80 256
+            C 95 285, 140 315, 185 320
+            L 186 332
+            L 214 332
+            L 215 320
+            C 260 315, 305 285, 320 256
+            C 280 286, 235 298, 200 298
+            C 165 298, 120 286, 80 256 Z" 
+            fill="url(#brassMetallic)"
+            stroke="#3d2000"
+            stroke-width="1"
+          />
+
+          <!-- Polished Bowl Rim Bevel Highlight -->
+          <ellipse cx="200" cy="256" rx="134" ry="16" fill="none" stroke="url(#brassHighlight)" stroke-width="2.5"/>
+
+          <!-- Decorative Floral Drop Pendants hanging below bowl rim -->
+          <g id="rim-pendants" fill="url(#brassHighlight)" opacity="0.9">
+            <polygon points="100,268 103,278 97,278" />
+            <circle cx="100" cy="281" r="2.5" />
+            <polygon points="140,277 143,288 137,288" />
+            <circle cx="140" cy="291" r="2.5" />
+            <polygon points="200,283 203,296 197,296" />
+            <circle cx="200" cy="299" r="3" />
+            <polygon points="260,277 263,288 257,288" />
+            <circle cx="260" cy="291" r="2.5" />
+            <polygon points="300,268 303,278 297,278" />
+            <circle cx="300" cy="281" r="2.5" />
+          </g>
+
+          <!-- 5 Physical Wick Tips resting in the brass notches -->
+          <!-- Wick 1 (Left): x=68, y=250 -->
+          <rect id="wick-tip-1" x="66" y="244" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
+          <!-- Wick 2 (Mid-Left): x=132, y=260 -->
+          <rect id="wick-tip-2" x="130" y="253" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
+          <!-- Wick 3 (Center): x=200, y=266 -->
+          <rect id="wick-tip-3" x="198" y="258" width="5" height="10" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
+          <!-- Wick 4 (Mid-Right): x=268, y=260 -->
+          <rect id="wick-tip-4" x="266" y="253" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
+          <!-- Wick 5 (Right): x=332, y=250 -->
+          <rect id="wick-tip-5" x="330" y="244" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
+        </g>
+
+        <!-- ================================================================
+             3. CENTRAL COLUMN / PILLAR (කඳ - KANDA)
+             Turned brass rings, bulbous nodes (kavadi), and tapered sections
+             ================================================================ -->
+        <g id="central-pillar">
+          <!-- Collar ring under dish -->
+          <ellipse cx="200" cy="334" rx="26" ry="7" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
+          
+          <!-- Turned Upper Spindle -->
+          <path d="M188 334 L185 365 L215 365 L212 334 Z" fill="url(#brassMetallic)"/>
+          <ellipse cx="200" cy="365" rx="22" ry="6" fill="url(#brassHighlight)"/>
+
+          <!-- Major Bulbous Node (ගෙඩිය / කාවඩි - Decorative Central Bulb) -->
+          <path d="M178 395 C160 415, 160 435, 178 450 C188 458, 212 458, 222 450 C240 435, 240 415, 222 395 C212 388, 188 388, 178 395 Z" fill="url(#brassBulbHighlight)" stroke="#5c3802" stroke-width="1.2"/>
+          
+          <!-- Embossed Lotus Petal Rings around central node -->
+          <ellipse cx="200" cy="422" rx="38" ry="8" fill="none" stroke="url(#brassHighlight)" stroke-width="2.5"/>
+          <ellipse cx="200" cy="422" rx="36" ry="7" fill="none" stroke="#5c3802" stroke-dasharray="4 3" stroke-width="1.5"/>
+
+          <!-- Lower Stem Collar & Rings -->
+          <ellipse cx="200" cy="454" rx="24" ry="6" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
+          <path d="M186 454 L183 495 L217 495 L214 454 Z" fill="url(#brassMetallic)"/>
+          
+          <!-- Secondary Minor Bulb -->
+          <ellipse cx="200" cy="495" rx="30" ry="8" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
+          <path d="M182 500 C175 515, 175 528, 185 538 C192 542, 208 542, 215 538 C225 528, 225 515, 218 500 Z" fill="url(#brassBulbHighlight)"/>
+          <ellipse cx="200" cy="538" rx="26" ry="7" fill="url(#brassMetallic)"/>
+        </g>
+
+        <!-- ================================================================
+             4. PEDESTAL BASE (පාදය - PADA)
+             Flared, heavy stepped circular base with traditional lotus carvings
+             ================================================================ -->
+        <g id="pedestal-base">
+          <!-- Top step of base -->
+          <path d="M184 542 L170 565 L230 565 L216 542 Z" fill="url(#brassMetallic)"/>
+          <ellipse cx="200" cy="565" rx="46" ry="11" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
+
+          <!-- Mid flare with Lotus Petal engraving -->
+          <path d="
+            M 158 568 
+            C 142 595, 115 608, 90 615
+            L 310 615
+            C 285 608, 258 595, 242 568 Z" 
+            fill="url(#brassMetallic)" 
+            stroke="#3d2000" 
+            stroke-width="1.5"
+          />
+
+          <!-- Base Step 1 -->
+          <ellipse cx="200" cy="615" rx="115" ry="16" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1.5"/>
+
+          <!-- Bottom Heavy Footing -->
+          <path d="M85 615 L80 632 C80 642, 130 650, 200 650 C270 650, 320 642, 320 632 L315 615 Z" fill="url(#brassDishGradient)" stroke="#3d2000" stroke-width="1.5"/>
+          <ellipse cx="200" cy="632" rx="120" ry="17" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
+          
+          <!-- Ground Shadow beneath pedestal -->
+          <ellipse cx="200" cy="644" rx="145" ry="12" fill="rgba(0,0,0,0.85)" class="pointer-events-none" />
+        </g>
+      </svg>
+
+    </div>
+
+  </main>
+
+  <!-- ======================================================================
+       BOTTOM CEREMONIAL BANNER & CELEBRATION OVERLAY
+       ====================================================================== -->
+  <footer id="ui-footer" class="w-full flex flex-col items-center justify-center pb-6 z-30 transition-all duration-700">
+    <div id="celebration-message" class="flex flex-col items-center text-center px-6 py-3 rounded-2xl bg-black/40 border border-gold-500/20 backdrop-blur-md max-w-2xl transition-all duration-700">
+      <div id="banner-title" class="font-serif text-lg md:text-xl font-bold tracking-widest text-gold-300 uppercase">
+        Awaiting First Wick
+      </div>
+      <div id="banner-sub" class="font-sans text-xs md:text-sm text-amber-200/70 mt-0.5">
+        Guests may now step forward to the tablet to illuminate the sacred flame.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================================
+       JAVASCRIPT REAL-TIME LOGIC & SYNTHESIZED SOUND
+       ====================================================================== -->
+  <script>
+    // ========================================================================
+    // 1. FIREBASE CONFIGURATION & INITIALIZATION
+    // ========================================================================
+    const defaultFirebaseConfig = {
+      apiKey: "AIzaSyDz2tXS4DZfU1GQezp2NyUZJ4oU_QSh5yI",
+      authDomain: "year-end-lighting-oil-lamp.firebaseapp.com",
+      databaseURL: "https://year-end-lighting-oil-lamp-default-rtdb.firebaseio.com",
+      projectId: "year-end-lighting-oil-lamp",
+      storageBucket: "year-end-lighting-oil-lamp.firebasestorage.app",
+      messagingSenderId: "1089802445328",
+      appId: "1:1089802445328:web:0f02cdbb4962b1f0dfe095",
+      measurementId: "G-KCV78Z03S5"
+    };
+
+    const config = window.firebaseConfig || defaultFirebaseConfig;
+    const isFirebaseConfigured = config.apiKey && config.apiKey !== "YOUR_API_KEY";
+
+    let db = null;
+    let lampStateRef = null;
+
+    if (isFirebaseConfigured && typeof firebase !== 'undefined') {
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(config);
+        }
+        db = firebase.database();
+        lampStateRef = db.ref('lampState');
+        console.log("Firebase initialized successfully on Display.");
+      } catch (err) {
+        console.error("Firebase init error on display:", err);
+      }
+    } else {
+      console.warn("Using BroadcastChannel/localStorage fallback for local sync (no Firebase credentials entered yet).");
+    }
+
+    // BroadcastChannel fallback for multi-tab testing
+    const localSyncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('pahana_sync') : null;
+
+    // ========================================================================
+    // 2. SYNTHESIZED CEREMONIAL AUDIO (Web Audio API)
+    // ========================================================================
+    let audioCtx = null;
+    let isAudioEnabled = false;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      isAudioEnabled = true;
+      updateAudioIcon();
+    }
+
+    function updateAudioIcon() {
+      const onIcon = document.getElementById('audio-icon-on');
+      const offIcon = document.getElementById('audio-icon-off');
+      if (isAudioEnabled) {
+        onIcon.classList.remove('hidden');
+        offIcon.classList.add('hidden');
+      } else {
+        onIcon.classList.add('hidden');
+        offIcon.classList.remove('hidden');
+      }
+    }
+
+    // Traditional deep temple gong / brass chime tone on wick ignition
+    function playWickIgniteSound(wickNumber) {
+      if (!isAudioEnabled || !audioCtx) return;
+
+      try {
+        const now = audioCtx.currentTime;
+
+        // Pitches ascend harmoniously with each wick (Traditional Sri Lankan pentatonic scale)
+        const basePitches = [220, 261.63, 293.66, 329.63, 392]; // A3, C4, D4, E4, G4
+        const root = basePitches[(wickNumber - 1) % basePitches.length];
+
+        // 1. Warm flame whoosh burst
+        const bufferSize = audioCtx.sampleRate * 0.4;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.08));
+        }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(400, now);
+        filter.frequency.exponentialRampToValueAtTime(100, now + 0.35);
+
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.2, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        noise.start(now);
+
+        // 2. Resonant brass harmonic bell chord
+        const harmonics = [1, 2, 2.76, 4.07, 5.43];
+        const harmonicGains = [0.35, 0.2, 0.12, 0.06, 0.03];
+
+        harmonics.forEach((h, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = idx === 0 ? 'sine' : 'triangle';
+          osc.frequency.setValueAtTime(root * h, now);
+
+          gain.gain.setValueAtTime(harmonicGains[idx], now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now);
+          osc.stop(now + 4.0);
+        });
+
+      } catch (e) {
+        console.error("Audio playback error:", e);
+      }
+    }
+
+    // Grand celebration fanfare chord when all 5 wicks are lit
+    function playGrandFinaleSound() {
+      if (!isAudioEnabled || !audioCtx) return;
+
+      try {
+        const now = audioCtx.currentTime;
+        const chord = [220, 277.18, 329.63, 440, 554.37, 659.25]; // A Major triumph
+
+        chord.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+
+          gain.gain.setValueAtTime(0.25 / (idx * 0.5 + 1), now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 6.0);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now + idx * 0.12);
+          osc.stop(now + 6.2);
+        });
+      } catch (e) {}
+    }
+
+    // ========================================================================
+    // 3. UI REFERENCES & ELEMENTS
+    // ========================================================================
+    const ambientRoomGlow = document.getElementById('ambient-room-glow');
+    const displayWickDots = document.getElementById('display-wick-dots');
+    const displayWickCount = document.getElementById('display-wick-count');
+    const bannerTitle = document.getElementById('banner-title');
+    const bannerSub = document.getElementById('banner-sub');
+    const celebrationMessage = document.getElementById('celebration-message');
+    const uiHeader = document.getElementById('ui-header');
+    const uiFooter = document.getElementById('ui-footer');
+    const audioToggleBtn = document.getElementById('audio-toggle-btn');
+    const displayFullscreenBtn = document.getElementById('display-fullscreen-btn');
+
+    const flames = [
+      document.getElementById('flame-wick-1'),
+      document.getElementById('flame-wick-2'),
+      document.getElementById('flame-wick-3'),
+      document.getElementById('flame-wick-4'),
+      document.getElementById('flame-wick-5'),
+    ];
+
+    const wickTips = [
+      document.getElementById('wick-tip-1'),
+      document.getElementById('wick-tip-2'),
+      document.getElementById('wick-tip-3'),
+      document.getElementById('wick-tip-4'),
+      document.getElementById('wick-tip-5'),
+    ];
+
+    let currentLitWicks = 0;
+    const MAX_WICKS = 5;
+
+    // Ambient glow presets per wick level (expanding warm radial light)
+    const glowPresets = [
+      {
+        bg: 'radial-gradient(circle at 50% 38%, rgba(255, 170, 40, 0.05) 0%, rgba(200, 100, 20, 0.02) 40%, transparent 70%)',
+        opacity: '0.2',
+        scale: '1'
+      },
+      {
+        bg: 'radial-gradient(circle at 50% 38%, rgba(255, 170, 40, 0.22) 0%, rgba(220, 90, 15, 0.12) 45%, transparent 75%)',
+        opacity: '0.45',
+        scale: '1.05'
+      },
+      {
+        bg: 'radial-gradient(circle at 50% 38%, rgba(255, 180, 50, 0.35) 0%, rgba(230, 95, 20, 0.2) 50%, transparent 80%)',
+        opacity: '0.6',
+        scale: '1.12'
+      },
+      {
+        bg: 'radial-gradient(circle at 50% 38%, rgba(255, 190, 60, 0.45) 0%, rgba(240, 105, 25, 0.28) 55%, transparent 85%)',
+        opacity: '0.75',
+        scale: '1.2'
+      },
+      {
+        bg: 'radial-gradient(circle at 50% 38%, rgba(255, 200, 70, 0.58) 0%, rgba(250, 115, 30, 0.36) 60%, transparent 90%)',
+        opacity: '0.88',
+        scale: '1.28'
+      },
+      {
+        bg: 'radial-gradient(circle at 50% 38%, rgba(255, 225, 90, 0.72) 0%, rgba(255, 130, 35, 0.48) 65%, rgba(180, 40, 10, 0.2) 85%, transparent 95%)',
+        opacity: '1.0',
+        scale: '1.38'
+      }
+    ];
+
+    // ========================================================================
+    // 4. LAMP REAL-TIME VISUAL UPDATE
+    // ========================================================================
+    function updateLampDisplay(targetCount, triggeredByEvent = false) {
+      const newCount = Math.min(Math.max(targetCount || 0, 0), MAX_WICKS);
+      const isIncreasing = newCount > currentLitWicks;
+      currentLitWicks = newCount;
+
+      // Update Top Status Counter
+      displayWickCount.textContent = `${currentLitWicks} / ${MAX_WICKS}`;
+
+      // Update Top Dots
+      for (let i = 0; i < MAX_WICKS; i++) {
+        const dot = displayWickDots.children[i];
+        if (dot) {
+          if (i < currentLitWicks) {
+            dot.className = 'w-3.5 h-3.5 rounded-full bg-gold-400 shadow-[0_0_12px_#facc15] transition-all duration-700';
+          } else {
+            dot.className = 'w-3.5 h-3.5 rounded-full bg-white/20 transition-all duration-700';
+          }
+        }
+      }
+
+      // Update Physical Flames & Wick Tips
+      flames.forEach((flameEl, index) => {
+        const isLit = index < currentLitWicks;
+        if (isLit) {
+          flameEl.classList.add('active');
+          if (wickTips[index]) {
+            wickTips[index].setAttribute('fill', '#ff5722');
+          }
+        } else {
+          flameEl.classList.remove('active');
+          if (wickTips[index]) {
+            wickTips[index].setAttribute('fill', '#2d1f18');
+          }
+        }
+      });
+
+      // Update Ambient Room Glow (Dynamically illuminates the whole room)
+      const glowSetting = glowPresets[currentLitWicks];
+      ambientRoomGlow.style.background = glowSetting.bg;
+      ambientRoomGlow.style.opacity = glowSetting.opacity;
+      ambientRoomGlow.style.transform = `scale(${glowSetting.scale})`;
+
+      // Audio & Message Updates
+      if (isIncreasing) {
+        playWickIgniteSound(currentLitWicks);
+      }
+
+      // Banner Text State
+      if (currentLitWicks === 0) {
+        bannerTitle.textContent = "Awaiting First Wick";
+        bannerTitle.className = "font-serif text-lg md:text-xl font-bold tracking-widest text-gold-300 uppercase";
+        bannerSub.textContent = "Guests may now step forward to the tablet to illuminate the sacred flame.";
+        celebrationMessage.classList.remove('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
+      } else if (currentLitWicks < MAX_WICKS) {
+        bannerTitle.textContent = `Wick #${currentLitWicks} Ignited`;
+        bannerTitle.className = "font-serif text-lg md:text-xl font-bold tracking-widest text-amber-200 uppercase";
+        bannerSub.textContent = `May the light dispel darkness and bring wisdom and prosperity • ${currentLitWicks} of ${MAX_WICKS} lit`;
+        celebrationMessage.classList.remove('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
+      } else {
+        // ALL 5 WICKS LIT - GRAND FINALE!
+        bannerTitle.textContent = "The Lamp Shines in Full Radiance";
+        bannerTitle.className = "font-serif text-xl md:text-2xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-gold-400 to-amber-200 drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]";
+        bannerSub.textContent = "සියලු පහන් දැල්විණි • Wishing you a luminous and prosperous new year!";
+        celebrationMessage.classList.add('border-emerald-400/50', 'shadow-[0_0_35px_rgba(234,179,8,0.4)]');
+
+        if (isIncreasing) {
+          playGrandFinaleSound();
+        }
+      }
+    }
+
+    // ========================================================================
+    // 5. DATABASE SYNC (Firebase + Fallback)
+    // ========================================================================
+    if (lampStateRef) {
+      lampStateRef.on('value', (snapshot) => {
+        const val = snapshot.val();
+        const count = val ? (val.litWicks || 0) : 0;
+        updateLampDisplay(count, true);
+      }, (err) => {
+        console.error("Firebase display sync error:", err);
+      });
+    } else {
+      // Local fallback
+      const stored = parseInt(localStorage.getItem('lampState_litWicks') || '0', 10);
+      updateLampDisplay(stored);
+    }
+
+    // BroadcastChannel listener for seamless instant local cross-tab testing
+    if (localSyncChannel) {
+      localSyncChannel.onmessage = (event) => {
+        if (event.data && typeof event.data.litWicks !== 'undefined') {
+          updateLampDisplay(event.data.litWicks, true);
+        }
+      };
+    }
+
+    // Listen to localStorage storage events (works across different tabs on the same machine)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'lampState_litWicks') {
+        const newCount = parseInt(e.newValue || '0', 10);
+        updateLampDisplay(newCount, true);
+      }
+    });
+
+    // ========================================================================
+    // 6. KEYBOARD SHORTCUTS & EVENT TECHNICIAN CONTROLS
+    // ========================================================================
+    window.addEventListener('keydown', (e) => {
+      initAudioContext(); // Unlock audio on first keypress
+
+      // Numbers 0 - 5: directly set wicks for rehearsals
+      if (e.key >= '0' && e.key <= '5') {
+        const count = parseInt(e.key, 10);
+        updateLampDisplay(count, true);
+        // Persist
+        localStorage.setItem('lampState_litWicks', count.toString());
+        if (localSyncChannel) localSyncChannel.postMessage({ litWicks: count });
+        if (lampStateRef) lampStateRef.update({ litWicks: count, lastTriggered: Date.now() });
+      }
+
+      // Spacebar: increment wick
+      if (e.code === 'Space') {
+        e.preventDefault();
+        const next = Math.min(currentLitWicks + 1, MAX_WICKS);
+        updateLampDisplay(next, true);
+        localStorage.setItem('lampState_litWicks', next.toString());
+        if (localSyncChannel) localSyncChannel.postMessage({ litWicks: next });
+        if (lampStateRef) lampStateRef.update({ litWicks: next, lastTriggered: Date.now() });
+      }
+
+      // 'R': Reset
+      if (e.key === 'r' || e.key === 'R') {
+        updateLampDisplay(0, false);
+        localStorage.setItem('lampState_litWicks', '0');
+        if (localSyncChannel) localSyncChannel.postMessage({ litWicks: 0 });
+        if (lampStateRef) lampStateRef.update({ litWicks: 0, lastTriggered: Date.now() });
+      }
+
+      // 'F': Fullscreen
+      if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+
+      // 'H' or 'I': Toggle UI overlay for pure cinematic view on projector
+      if (e.key === 'h' || e.key === 'H' || e.key === 'i' || e.key === 'I') {
+        uiHeader.classList.toggle('opacity-0');
+        uiFooter.classList.toggle('opacity-0');
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    displayFullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    // Audio unlock on click anywhere or audio toggle button
+    audioToggleBtn.addEventListener('click', () => {
+      initAudioContext();
+    });
+
+    window.addEventListener('click', () => {
+      initAudioContext();
+    }, { once: true });
+  </script>
+</body>
+</html>
