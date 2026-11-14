@@ -205,17 +205,19 @@
     /* Wick Cotton Tip Indicator */
     .wick-tip {
       position: absolute;
-      width: 4px;
-      height: 8px;
-      background: #1c1511;
-      border-radius: 2px 2px 0 0;
-      transform: translate(-50%, -100%);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      width: 5px;
+      height: 7px;
+      background: #231812;
+      border-radius: 2px 2px 1px 1px;
+      transform: translate(-50%, -40%);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.9);
+      transition: background 0.4s, box-shadow 0.4s;
+      z-index: 25;
     }
 
     .wick-tip.lit {
       background: #ff5722;
-      box-shadow: 0 0 5px #ff5722;
+      box-shadow: 0 0 6px #ff7043, 0 0 12px #ffab91;
     }
 
     /* Celebration Halo Aura */
@@ -308,278 +310,91 @@
   </header>
 
   <!-- ======================================================================
-       CENTER STAGE: TRADITIONAL SRI LANKAN BRASS OIL LAMP (PAHANA)
+       CENTER STAGE: REALISTIC 3D SRI LANKAN BRASS OIL LAMP (PAHANA)
        ====================================================================== -->
-  <main class="relative flex-1 w-full flex items-center justify-center z-10 -mt-6">
+  <main class="relative flex-1 w-full flex items-center justify-center z-10 -mt-2 md:-mt-4">
 
-    <!-- Container for Brass Lamp + Floating Wick Flames -->
-    <!-- Dimensions engineered for 16:9 large displays & projectors -->
-    <div id="lamp-stage" class="relative w-[360px] md:w-[480px] lg:w-[540px] h-[580px] md:h-[720px] lg:h-[780px] flex items-center justify-center">
+    <!-- Container for 3D Brass Lamp + Floating Wick Flames -->
+    <!-- Engineered with the exact 234/672 aspect ratio of the 3D model -->
+    <div id="lamp-stage" class="relative w-[300px] md:w-[360px] lg:w-[410px] max-h-[78vh] aspect-[234/672] flex items-center justify-center">
+
+      <!-- Dynamic Halo behind upper lamp -->
+      <div id="lamp-dynamic-halo" class="absolute top-[28%] left-1/2 -translate-x-1/2 w-80 h-80 rounded-full pointer-events-none opacity-20 transition-opacity duration-1000" style="background: radial-gradient(circle, rgba(255, 200, 80, 0.4) 0%, rgba(255, 120, 20, 0.12) 50%, transparent 75%);"></div>
+
+      <!-- Pedestal Ground Shadow -->
+      <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[85%] h-6 bg-black/80 rounded-full blur-md pointer-events-none"></div>
 
       <!-- ==================================================================
-           5 FLICKERING WICK FLAMES (Positioned above each spout)
-           Coordinates align accurately with the brass oil dish spouts
+           REAL 3D SRI LANKAN BRASS OIL LAMP (PAHANA) MODEL
+           Rendered with metallic reflections, rooster finial, turned brass
+           nodes, and 5-wick oil reservoir dish.
+           ================================================================== -->
+      <img
+        id="pahana-3d-img"
+        src="pahana-3d.png"
+        alt="Traditional Sri Lankan 3D Brass Oil Lamp"
+        class="relative w-full h-full object-contain pointer-events-none select-none drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] transition-all duration-700"
+      />
+
+      <!-- ==================================================================
+           5 FLICKERING WICK FLAMES (Positioned directly on the 3D brass dish)
+           Coordinates align accurately with the 3D model's spouts
            ================================================================== -->
 
       <!-- WICK 1: Far Left -->
-      <div id="flame-wick-1" class="flame-wrapper wick-flame-1" style="left: 17%; top: 38.5%;">
+      <div id="flame-wick-1" class="flame-wrapper wick-flame-1 z-20" style="left: 24.5%; top: 63.6%;">
         <div class="flame-outer">
           <div class="flame-inner"></div>
           <div class="flame-base-blue"></div>
-          <div class="spark" style="left: 30%; --drift: -10px; animation-delay: 0.1s;"></div>
-          <div class="spark" style="left: 70%; --drift: -5px; animation-delay: 0.7s;"></div>
+          <div class="spark" style="left: 30%; --drift: -8px; animation-delay: 0.1s;"></div>
+          <div class="spark" style="left: 70%; --drift: -4px; animation-delay: 0.7s;"></div>
         </div>
       </div>
+      <div class="wick-tip" id="wick-tip-1" style="left: 24.5%; top: 63.8%;"></div>
 
       <!-- WICK 2: Mid Left -->
-      <div id="flame-wick-2" class="flame-wrapper wick-flame-2" style="left: 33%; top: 39.8%;">
+      <div id="flame-wick-2" class="flame-wrapper wick-flame-2 z-20" style="left: 42.5%; top: 64.0%;">
         <div class="flame-outer">
           <div class="flame-inner"></div>
           <div class="flame-base-blue"></div>
-          <div class="spark" style="left: 40%; --drift: -6px; animation-delay: 0.3s;"></div>
+          <div class="spark" style="left: 40%; --drift: -5px; animation-delay: 0.3s;"></div>
           <div class="spark" style="left: 60%; --drift: -2px; animation-delay: 0.9s;"></div>
         </div>
       </div>
+      <div class="wick-tip" id="wick-tip-2" style="left: 42.5%; top: 64.2%;"></div>
 
       <!-- WICK 3: Center Front -->
-      <div id="flame-wick-3" class="flame-wrapper wick-flame-3" style="left: 50%; top: 40.5%;">
+      <div id="flame-wick-3" class="flame-wrapper wick-flame-3 z-20" style="left: 60.9%; top: 64.6%;">
         <div class="flame-outer scale-110">
           <div class="flame-inner"></div>
           <div class="flame-base-blue"></div>
-          <div class="spark" style="left: 50%; --drift: 4px; animation-delay: 0.2s;"></div>
-          <div class="spark" style="left: 20%; --drift: -6px; animation-delay: 0.8s;"></div>
+          <div class="spark" style="left: 50%; --drift: 3px; animation-delay: 0.2s;"></div>
+          <div class="spark" style="left: 20%; --drift: -5px; animation-delay: 0.8s;"></div>
         </div>
       </div>
+      <div class="wick-tip" id="wick-tip-3" style="left: 60.9%; top: 64.8%;"></div>
 
       <!-- WICK 4: Mid Right -->
-      <div id="flame-wick-4" class="flame-wrapper wick-flame-4" style="left: 67%; top: 39.8%;">
+      <div id="flame-wick-4" class="flame-wrapper wick-flame-4 z-20" style="left: 79.5%; top: 64.0%;">
         <div class="flame-outer">
           <div class="flame-inner"></div>
           <div class="flame-base-blue"></div>
-          <div class="spark" style="left: 60%; --drift: 6px; animation-delay: 0.4s;"></div>
+          <div class="spark" style="left: 60%; --drift: 5px; animation-delay: 0.4s;"></div>
           <div class="spark" style="left: 30%; --drift: 2px; animation-delay: 1.0s;"></div>
         </div>
       </div>
+      <div class="wick-tip" id="wick-tip-4" style="left: 79.5%; top: 64.2%;"></div>
 
       <!-- WICK 5: Far Right -->
-      <div id="flame-wick-5" class="flame-wrapper wick-flame-5" style="left: 83%; top: 38.5%;">
+      <div id="flame-wick-5" class="flame-wrapper wick-flame-5 z-20" style="left: 97.0%; top: 63.6%;">
         <div class="flame-outer">
           <div class="flame-inner"></div>
           <div class="flame-base-blue"></div>
-          <div class="spark" style="left: 70%; --drift: 10px; animation-delay: 0.2s;"></div>
-          <div class="spark" style="left: 40%; --drift: 5px; animation-delay: 0.6s;"></div>
+          <div class="spark" style="left: 70%; --drift: 8px; animation-delay: 0.2s;"></div>
+          <div class="spark" style="left: 40%; --drift: 4px; animation-delay: 0.6s;"></div>
         </div>
       </div>
-
-      <!-- ==================================================================
-           AUTHENTIC SRI LANKAN BRASS OIL LAMP (PAHANA) VECTOR GRAPHIC
-           Rendered with metallic brass gradients, Hansa / Rooster finial,
-           5-wick oil dish, turned brass nodes, and flared pedestal base.
-           ================================================================== -->
-      <svg id="pahana-svg" class="w-full h-full drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)]" viewBox="0 0 400 650" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <!-- Polished Brass Linear Gradients -->
-          <linearGradient id="brassMetallic" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#4a2800" />
-            <stop offset="15%" stop-color="#996c13" />
-            <stop offset="35%" stop-color="#e5b842" />
-            <stop offset="50%" stop-color="#fff5b8" />
-            <stop offset="65%" stop-color="#e5b842" />
-            <stop offset="85%" stop-color="#996c13" />
-            <stop offset="100%" stop-color="#3d2000" />
-          </linearGradient>
-
-          <linearGradient id="brassHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#7c530e" />
-            <stop offset="40%" stop-color="#fedc6a" />
-            <stop offset="50%" stop-color="#ffffff" />
-            <stop offset="60%" stop-color="#fedc6a" />
-            <stop offset="100%" stop-color="#5c3802" />
-          </linearGradient>
-
-          <linearGradient id="brassDishGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#fedc6a" />
-            <stop offset="40%" stop-color="#c99726" />
-            <stop offset="80%" stop-color="#734907" />
-            <stop offset="100%" stop-color="#3b2100" />
-          </linearGradient>
-
-          <radialGradient id="brassBulbHighlight" cx="45%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="#ffffff" />
-            <stop offset="25%" stop-color="#fce17b" />
-            <stop offset="60%" stop-color="#c29124" />
-            <stop offset="90%" stop-color="#694107" />
-            <stop offset="100%" stop-color="#2c1700" />
-          </radialGradient>
-
-          <radialGradient id="lampGlowFilter" cx="50%" cy="40%" r="50%">
-            <stop offset="0%" stop-color="rgba(255, 220, 100, 0.4)" />
-            <stop offset="70%" stop-color="rgba(255, 120, 20, 0.1)" />
-            <stop offset="100%" stop-color="transparent" />
-          </radialGradient>
-        </defs>
-
-        <!-- Dynamic Halo behind upper lamp -->
-        <circle cx="200" cy="270" r="160" fill="url(#lampGlowFilter)" class="pointer-events-none" />
-
-        <!-- ================================================================
-             1. THE CROWN FINIAL: KANDYAN ROOSTER / HANSA (කූකුළා / හංසයා)
-             Traditional bird finial symbolizing dawn and auspicious beginning
-             ================================================================ -->
-        <g id="finial-rooster" transform="translate(0, 10)">
-          <!-- Rooster Tail Plumes (Arched curved brass feathers) -->
-          <path d="M192 105 C185 80, 160 50, 142 58 C130 63, 138 85, 158 95 C170 102, 185 110, 190 120" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
-          <path d="M194 100 C182 65, 155 32, 135 40 C122 45, 128 70, 148 83 C165 94, 185 105, 192 115" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
-          <path d="M196 95 C190 60, 175 25, 150 18 C138 14, 136 35, 152 52 C168 70, 188 90, 195 105" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
-          <!-- Central Crest / Tail plume top arc -->
-          <path d="M198 90 C198 45, 190 10, 170 4 C158 0, 152 18, 165 38 C178 58, 195 80, 198 100" fill="url(#brassMetallic)"/>
-
-          <!-- Rooster Body & Chest -->
-          <path d="M190 125 C190 105, 205 92, 218 95 C230 98, 238 112, 232 125 C226 138, 205 142, 190 135 Z" fill="url(#brassBulbHighlight)" stroke="#5c3802" stroke-width="1"/>
-          
-          <!-- Rooster Neck & Head -->
-          <path d="M215 100 C218 88, 222 75, 228 68 C232 63, 240 65, 240 75 C240 85, 230 96, 224 105 Z" fill="url(#brassMetallic)"/>
-          
-          <!-- Rooster Comb (Crest atop head) -->
-          <path d="M232 64 C230 58, 235 52, 240 54 C243 55, 243 60, 246 58 C249 56, 252 60, 248 65 C244 70, 238 72, 232 64 Z" fill="url(#brassHighlight)"/>
-          
-          <!-- Beak & Wattle -->
-          <path d="M242 70 L254 73 L242 77 Z" fill="#fff5b8" stroke="#734907" stroke-width="0.8"/>
-          <path d="M238 78 C242 82, 240 88, 236 86 C234 84, 235 80, 238 78 Z" fill="#b91c1c"/>
-
-          <!-- Bird Pedestal Cup (Small turned brass disc holding the bird) -->
-          <ellipse cx="200" cy="142" rx="18" ry="5" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
-          <path d="M192 142 L194 156 L206 156 L208 142 Z" fill="url(#brassHighlight)"/>
-          <ellipse cx="200" cy="156" rx="24" ry="7" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
-          <path d="M190 156 C190 170, 195 185, 200 195 C205 185, 210 170, 210 156 Z" fill="url(#brassBulbHighlight)"/>
-          <ellipse cx="200" cy="195" rx="16" ry="5" fill="url(#brassMetallic)"/>
-        </g>
-
-        <!-- ================================================================
-             2. MAIN WICK RESERVOIR DISH (තැටිය - TETIYA)
-             Deep brass basin with 5 prominent spout projections for wicks
-             ================================================================ -->
-        <g id="oil-dish-tier">
-          <!-- Upper Lip & Spouts Rim (Wide flared bowl) -->
-          <!-- The 5 distinct spout lips: Far-Left, Mid-Left, Center, Mid-Right, Far-Right -->
-          <path d="
-            M 68 250 
-            C 100 258, 120 262, 132 260
-            C 145 258, 180 266, 200 266
-            C 220 266, 255 258, 268 260
-            C 280 262, 300 258, 332 250
-            C 310 275, 260 295, 200 295
-            C 140 295, 90 275, 68 250 Z" 
-            fill="url(#brassDishGradient)" 
-            stroke="#5c3802" 
-            stroke-width="1.5"
-          />
-
-          <!-- Oil Bowl Underside (Chalice curve) -->
-          <path d="
-            M 80 256
-            C 95 285, 140 315, 185 320
-            L 186 332
-            L 214 332
-            L 215 320
-            C 260 315, 305 285, 320 256
-            C 280 286, 235 298, 200 298
-            C 165 298, 120 286, 80 256 Z" 
-            fill="url(#brassMetallic)"
-            stroke="#3d2000"
-            stroke-width="1"
-          />
-
-          <!-- Polished Bowl Rim Bevel Highlight -->
-          <ellipse cx="200" cy="256" rx="134" ry="16" fill="none" stroke="url(#brassHighlight)" stroke-width="2.5"/>
-
-          <!-- Decorative Floral Drop Pendants hanging below bowl rim -->
-          <g id="rim-pendants" fill="url(#brassHighlight)" opacity="0.9">
-            <polygon points="100,268 103,278 97,278" />
-            <circle cx="100" cy="281" r="2.5" />
-            <polygon points="140,277 143,288 137,288" />
-            <circle cx="140" cy="291" r="2.5" />
-            <polygon points="200,283 203,296 197,296" />
-            <circle cx="200" cy="299" r="3" />
-            <polygon points="260,277 263,288 257,288" />
-            <circle cx="260" cy="291" r="2.5" />
-            <polygon points="300,268 303,278 297,278" />
-            <circle cx="300" cy="281" r="2.5" />
-          </g>
-
-          <!-- 5 Physical Wick Tips resting in the brass notches -->
-          <!-- Wick 1 (Left): x=68, y=250 -->
-          <rect id="wick-tip-1" x="66" y="244" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
-          <!-- Wick 2 (Mid-Left): x=132, y=260 -->
-          <rect id="wick-tip-2" x="130" y="253" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
-          <!-- Wick 3 (Center): x=200, y=266 -->
-          <rect id="wick-tip-3" x="198" y="258" width="5" height="10" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
-          <!-- Wick 4 (Mid-Right): x=268, y=260 -->
-          <rect id="wick-tip-4" x="266" y="253" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
-          <!-- Wick 5 (Right): x=332, y=250 -->
-          <rect id="wick-tip-5" x="330" y="244" width="4.5" height="9" rx="1.5" fill="#2d1f18" stroke="#120b08" stroke-width="0.8"/>
-        </g>
-
-        <!-- ================================================================
-             3. CENTRAL COLUMN / PILLAR (කඳ - KANDA)
-             Turned brass rings, bulbous nodes (kavadi), and tapered sections
-             ================================================================ -->
-        <g id="central-pillar">
-          <!-- Collar ring under dish -->
-          <ellipse cx="200" cy="334" rx="26" ry="7" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
-          
-          <!-- Turned Upper Spindle -->
-          <path d="M188 334 L185 365 L215 365 L212 334 Z" fill="url(#brassMetallic)"/>
-          <ellipse cx="200" cy="365" rx="22" ry="6" fill="url(#brassHighlight)"/>
-
-          <!-- Major Bulbous Node (ගෙඩිය / කාවඩි - Decorative Central Bulb) -->
-          <path d="M178 395 C160 415, 160 435, 178 450 C188 458, 212 458, 222 450 C240 435, 240 415, 222 395 C212 388, 188 388, 178 395 Z" fill="url(#brassBulbHighlight)" stroke="#5c3802" stroke-width="1.2"/>
-          
-          <!-- Embossed Lotus Petal Rings around central node -->
-          <ellipse cx="200" cy="422" rx="38" ry="8" fill="none" stroke="url(#brassHighlight)" stroke-width="2.5"/>
-          <ellipse cx="200" cy="422" rx="36" ry="7" fill="none" stroke="#5c3802" stroke-dasharray="4 3" stroke-width="1.5"/>
-
-          <!-- Lower Stem Collar & Rings -->
-          <ellipse cx="200" cy="454" rx="24" ry="6" fill="url(#brassMetallic)" stroke="#3d2000" stroke-width="1"/>
-          <path d="M186 454 L183 495 L217 495 L214 454 Z" fill="url(#brassMetallic)"/>
-          
-          <!-- Secondary Minor Bulb -->
-          <ellipse cx="200" cy="495" rx="30" ry="8" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
-          <path d="M182 500 C175 515, 175 528, 185 538 C192 542, 208 542, 215 538 C225 528, 225 515, 218 500 Z" fill="url(#brassBulbHighlight)"/>
-          <ellipse cx="200" cy="538" rx="26" ry="7" fill="url(#brassMetallic)"/>
-        </g>
-
-        <!-- ================================================================
-             4. PEDESTAL BASE (පාදය - PADA)
-             Flared, heavy stepped circular base with traditional lotus carvings
-             ================================================================ -->
-        <g id="pedestal-base">
-          <!-- Top step of base -->
-          <path d="M184 542 L170 565 L230 565 L216 542 Z" fill="url(#brassMetallic)"/>
-          <ellipse cx="200" cy="565" rx="46" ry="11" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
-
-          <!-- Mid flare with Lotus Petal engraving -->
-          <path d="
-            M 158 568 
-            C 142 595, 115 608, 90 615
-            L 310 615
-            C 285 608, 258 595, 242 568 Z" 
-            fill="url(#brassMetallic)" 
-            stroke="#3d2000" 
-            stroke-width="1.5"
-          />
-
-          <!-- Base Step 1 -->
-          <ellipse cx="200" cy="615" rx="115" ry="16" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1.5"/>
-
-          <!-- Bottom Heavy Footing -->
-          <path d="M85 615 L80 632 C80 642, 130 650, 200 650 C270 650, 320 642, 320 632 L315 615 Z" fill="url(#brassDishGradient)" stroke="#3d2000" stroke-width="1.5"/>
-          <ellipse cx="200" cy="632" rx="120" ry="17" fill="url(#brassHighlight)" stroke="#5c3802" stroke-width="1"/>
-          
-          <!-- Ground Shadow beneath pedestal -->
-          <ellipse cx="200" cy="644" rx="145" ry="12" fill="rgba(0,0,0,0.85)" class="pointer-events-none" />
-        </g>
-      </svg>
+      <div class="wick-tip" id="wick-tip-5" style="left: 97.0%; top: 63.8%;"></div>
 
     </div>
 
@@ -854,15 +669,31 @@
         if (isLit) {
           flameEl.classList.add('active');
           if (wickTips[index]) {
-            wickTips[index].setAttribute('fill', '#ff5722');
+            wickTips[index].classList.add('lit');
           }
         } else {
           flameEl.classList.remove('active');
           if (wickTips[index]) {
-            wickTips[index].setAttribute('fill', '#2d1f18');
+            wickTips[index].classList.remove('lit');
           }
         }
       });
+
+      // Update 3D Lamp Lighting & Reflections dynamically
+      const pahana3dImg = document.getElementById('pahana-3d-img');
+      const lampDynamicHalo = document.getElementById('lamp-dynamic-halo');
+      if (pahana3dImg) {
+        if (currentLitWicks === 0) {
+          pahana3dImg.style.filter = 'drop-shadow(0 20px 35px rgba(0,0,0,0.9)) brightness(0.92) contrast(1.02)';
+          if (lampDynamicHalo) lampDynamicHalo.style.opacity = '0.12';
+        } else {
+          const brightnessVal = 0.95 + (currentLitWicks * 0.05); // increases up to 1.20
+          const warmGlowRadius = currentLitWicks * 9;
+          const glowAlpha = 0.2 + (currentLitWicks * 0.14);
+          pahana3dImg.style.filter = `drop-shadow(0 0 ${warmGlowRadius}px rgba(255, 170, 40, ${glowAlpha})) drop-shadow(0 20px 35px rgba(0,0,0,0.95)) brightness(${brightnessVal}) contrast(1.06)`;
+          if (lampDynamicHalo) lampDynamicHalo.style.opacity = (0.2 + currentLitWicks * 0.15).toString();
+        }
+      }
 
       // Update Ambient Room Glow (Dynamically illuminates the whole room)
       const glowSetting = glowPresets[currentLitWicks];
