@@ -496,6 +496,7 @@
     if (lampStateRef) {
       lampStateRef.on('value', (snapshot) => {
         const val = snapshot.val();
+        connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Live';
         if (val) {
           updateWickDisplay(val.litWicks || 0);
         } else {
@@ -503,7 +504,7 @@
         }
       }, (err) => {
         console.error("Firebase sync error:", err);
-        connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> Local Sync';
+        connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span> Firebase: Permission Denied';
       });
     } else {
       // Local storage check
@@ -537,8 +538,10 @@
             litWicks: newCount,
             lastTriggered: timestamp
           });
+          console.log("Firebase updated litWicks to:", newCount);
         } catch (e) {
-          console.error("Failed to update Firebase:", e);
+          console.error("Failed to update Firebase (Check Database Rules!):", e);
+          connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span> Firebase Write Denied';
         }
       }
     }

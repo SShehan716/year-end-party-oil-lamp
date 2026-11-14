@@ -906,9 +906,10 @@
       lampStateRef.on('value', (snapshot) => {
         const val = snapshot.val();
         const count = val ? (val.litWicks || 0) : 0;
+        console.log("Firebase display received litWicks:", count);
         updateLampDisplay(count, true);
       }, (err) => {
-        console.error("Firebase display sync error:", err);
+        console.error("Firebase display sync error (Check Database Rules!):", err);
       });
     } else {
       // Local fallback
