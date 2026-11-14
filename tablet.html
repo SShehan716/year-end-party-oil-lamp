@@ -497,10 +497,12 @@
       lampStateRef.on('value', (snapshot) => {
         const val = snapshot.val();
         connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Live';
-        if (val) {
-          updateWickDisplay(val.litWicks || 0);
+        if (val && typeof val.litWicks === 'number') {
+          updateWickDisplay(val.litWicks);
         } else {
-          updateWickDisplay(0);
+          // If Firebase has not been initialized yet, preserve local state
+          const stored = parseInt(localStorage.getItem('lampState_litWicks') || '0', 10);
+          updateWickDisplay(stored);
         }
       }, (err) => {
         console.error("Firebase sync error:", err);
@@ -524,21 +526,25 @@
 
     // Save litWicks to Firebase and fallback
     async function setLampStateInDB(newCount) {
+      const clampedCount = Math.min(Math.max(newCount, 0), MAX_WICKS);
+      currentLitWicks = clampedCount;
+      updateWickDisplay(clampedCount);
+
       const timestamp = Date.now();
-      localStorage.setItem('lampState_litWicks', newCount.toString());
+      localStorage.setItem('lampState_litWicks', clampedCount.toString());
       localStorage.setItem('lampState_lastTriggered', timestamp.toString());
 
       if (localSyncChannel) {
-        localSyncChannel.postMessage({ litWicks: newCount, lastTriggered: timestamp });
+        localSyncChannel.postMessage({ litWicks: clampedCount, lastTriggered: timestamp });
       }
 
       if (lampStateRef) {
         try {
-          await lampStateRef.update({
-            litWicks: newCount,
+          await lampStateRef.set({
+            litWicks: clampedCount,
             lastTriggered: timestamp
           });
-          console.log("Firebase updated litWicks to:", newCount);
+          console.log("Firebase updated litWicks to:", clampedCount);
         } catch (e) {
           console.error("Failed to update Firebase (Check Database Rules!):", e);
           connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span> Firebase Write Denied';
@@ -546,30 +552,16 @@
       }
     }
 
-    // Increment wick count
+    // Increment wick count deterministically
     async function triggerWickIgnition() {
       if (currentLitWicks >= MAX_WICKS) {
         console.log("Max wicks already lit.");
-        return;
+        return currentLitWicks;
       }
 
-      if (lampStateRef) {
-        try {
-          await lampStateRef.transaction((current) => {
-            const currentCount = (current && current.litWicks) || 0;
-            if (currentCount >= MAX_WICKS) return current;
-            return {
-              litWicks: currentCount + 1,
-              lastTriggered: Date.now()
-            };
-          });
-        } catch (e) {
-          console.error("Transaction error, falling back to direct write:", e);
-          await setLampStateInDB(currentLitWicks + 1);
-        }
-      } else {
-        await setLampStateInDB(currentLitWicks + 1);
-      }
+      const nextCount = currentLitWicks + 1;
+      await setLampStateInDB(nextCount);
+      return nextCount;
     }
 
     // Reset wick count to 0
@@ -682,14 +674,14 @@
       }
     }
 
-    function handleScanSuccess() {
+    async function handleScanSuccess() {
       isHolding = false;
       isLocked = true; // Lock UI during success presentation
       cancelAnimationFrame(scanAnimationFrameId);
       stopScanSound();
 
-      // Trigger Firebase / Database increment
-      triggerWickIgnition();
+      // Trigger Firebase / Database increment deterministically
+      const litIndex = await triggerWickIgnition();
 
       // Sound & Strong Haptic
       playSuccessChime();
@@ -705,16 +697,18 @@
       fingerprintPad.classList.remove('border-gold-400', 'idle-pulse');
       fingerprintPad.classList.add('success-pulse', 'border-emerald-400');
 
-      instructionTitle.textContent = `Flame #${currentLitWicks} Ignited!`;
+      instructionTitle.textContent = `Flame #${litIndex} Ignited!`;
       instructionTitle.className = "font-sans font-bold text-lg md:text-xl text-emerald-400 tracking-wide";
       instructionSub.textContent = "Look up at the main ceremonial display screen ✨";
-      scanPercentage.textContent = "VERIFIED • AUSPICIOUS LIGHT";
+      scanPercentage.textContent = `VERIFIED • WICK ${litIndex} OF 5`;
 
-      // 4-Second Cool-down for next guest
+      // 3-Second Cool-down for next guest
       let countdown = 3;
       const countdownInterval = setInterval(() => {
         if (currentLitWicks >= MAX_WICKS) {
           clearInterval(countdownInterval);
+          instructionTitle.textContent = "All 5 Wicks Are Lit!";
+          instructionSub.textContent = "The Pahana is fully illuminated. Ceremony Complete.";
           return;
         }
         instructionSub.textContent = `Next guest ready in ${countdown}s...`;
