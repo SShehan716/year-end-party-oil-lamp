@@ -266,10 +266,10 @@
     <!-- Instructions / Real-Time Status -->
     <div class="flex flex-col items-center text-center mt-3 h-16 justify-center">
       <div id="instruction-title" class="font-sans font-semibold text-base md:text-lg text-amber-100 tracking-wide transition-all">
-        Press &amp; Hold to Ignite Flame
+        Tap or Hold to Ignite Flame
       </div>
       <div id="instruction-sub" class="font-sans text-xs md:text-sm text-amber-300/60 mt-0.5">
-        Hold for 2 seconds &bull; පහන දල්වන්න
+        Click or hold fingerprint • පහන දල්වන්න
       </div>
     </div>
 
@@ -277,6 +277,11 @@
     <div id="scan-percentage" class="text-xs font-mono text-gold-400 tracking-widest uppercase opacity-0 transition-opacity">
       SCANNING: 0%
     </div>
+
+    <!-- Quick Ignite Button (Works on instant click for test & guests) -->
+    <button id="quick-ignite-btn" class="mt-2 px-4 py-1.5 rounded-full bg-gold-500/20 hover:bg-gold-500/40 border border-gold-500/40 text-gold-300 text-xs font-semibold tracking-wider flex items-center gap-1.5 active:scale-95 transition-all">
+      <span>🔥 Tap to Ignite Next Wick</span>
+    </button>
 
   </main>
 
@@ -641,11 +646,20 @@
     function cancelScanning() {
       if (!isHolding || isLocked) return;
 
+      const elapsed = performance.now() - holdStartTime;
       isHolding = false;
       cancelAnimationFrame(scanAnimationFrameId);
       stopScanSound();
 
-      // Reset circular progress smoothly
+      // If user tapped or held (> 100ms), trigger ignition immediately!
+      if (elapsed >= 100) {
+        progressCircle.style.transition = 'stroke-dashoffset 0.15s ease-out';
+        progressCircle.style.strokeDashoffset = '0';
+        handleScanSuccess();
+        return;
+      }
+
+      // Reset circular progress smoothly if accidental micro-touch
       progressCircle.style.transition = 'stroke-dashoffset 0.25s ease-out';
       progressCircle.style.strokeDashoffset = `${CIRCUMFERENCE}`;
       setTimeout(() => {
@@ -661,16 +675,8 @@
       scanPercentage.classList.add('opacity-0');
 
       if (currentLitWicks < MAX_WICKS) {
-        instructionTitle.textContent = "Hold Required (2 Seconds)";
-        instructionTitle.className = "font-sans font-semibold text-base md:text-lg text-amber-200 tracking-wide";
-        instructionSub.textContent = "Please hold finger steadily until full circle completes.";
-
-        setTimeout(() => {
-          if (!isHolding && !isLocked && currentLitWicks < MAX_WICKS) {
-            instructionTitle.textContent = "Press & Hold to Ignite Flame";
-            instructionSub.textContent = `Hold for 2 seconds • Wick #${currentLitWicks + 1} of ${MAX_WICKS}`;
-          }
-        }, 1800);
+        instructionTitle.textContent = "Tap or Hold to Ignite Flame";
+        instructionSub.textContent = `Wick #${currentLitWicks + 1} of ${MAX_WICKS} • පහන දල්වන්න`;
       }
     }
 
@@ -702,22 +708,15 @@
       instructionSub.textContent = "Look up at the main ceremonial display screen ✨";
       scanPercentage.textContent = `VERIFIED • WICK ${litIndex} OF 5`;
 
-      // 3-Second Cool-down for next guest
-      let countdown = 3;
-      const countdownInterval = setInterval(() => {
+      // Fast 1.5-Second Cool-down for next guest
+      setTimeout(() => {
         if (currentLitWicks >= MAX_WICKS) {
-          clearInterval(countdownInterval);
           instructionTitle.textContent = "All 5 Wicks Are Lit!";
           instructionSub.textContent = "The Pahana is fully illuminated. Ceremony Complete.";
           return;
         }
-        instructionSub.textContent = `Next guest ready in ${countdown}s...`;
-        countdown--;
-        if (countdown < 0) {
-          clearInterval(countdownInterval);
-          resetScannerUI();
-        }
-      }, 1000);
+        resetScannerUI();
+      }, 1500);
     }
 
     function resetScannerUI() {
@@ -743,6 +742,20 @@
     scanContainer.addEventListener('pointerdown', startScanning);
     window.addEventListener('pointerup', cancelScanning);
     window.addEventListener('pointercancel', cancelScanning);
+
+    // Quick Ignite button (instant single tap)
+    const quickIgniteBtn = document.getElementById('quick-ignite-btn');
+    if (quickIgniteBtn) {
+      quickIgniteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isLocked) return;
+        if (currentLitWicks >= MAX_WICKS) {
+          alert("All 5 wicks are already lit! Use reset button to restart.");
+          return;
+        }
+        handleScanSuccess();
+      });
+    }
 
     // ========================================================================
     // 6. HIDDEN ADMIN RESET (5 Clicks on Emblem)
